@@ -1,0 +1,20 @@
+{
+  "name": "generator-optimizely",
+  "version": "1.0.0",
+  "description": "A generator to scaffold Optimizely files locally",
+  "main": "index.js",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Davies",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "cli-spinners": "^2.9.2",
+    "fs": "^0.0.1-security",
+    "yeoman-generator": "^7.1.1"
+  }
+}
