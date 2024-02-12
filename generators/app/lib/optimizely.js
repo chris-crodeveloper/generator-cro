@@ -96,3 +96,15 @@ export const optimizelyPayload = ({
     variations: variations,
   };
 };
+
+/**
+ * Optimizely Test Types
+ */
+
+export const testTypes = [
+  "a/b",
+  "feature",
+  "multivariant",
+  "personalization",
+  "multiarmed_bandit",
+];

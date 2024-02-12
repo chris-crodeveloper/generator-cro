@@ -1,0 +1,90 @@
+{
+  "generator-optimizely": {
+    "opticonfig": {
+      "optimizely": {
+        "project_defaults": {
+          "auth_token": "",
+          "default_project_id": "",
+          "default_audiences": {
+            "audience-1-name": "audience-1-id",
+            "audience-2-name": "audience-2-id"
+          }
+        }
+      },
+      "prompts": {
+        "config": {
+          "childFolders": [
+            "testChildFolder"
+          ],
+          "developers": [
+            "Chris",
+            "Pushkal",
+            "Josh"
+          ],
+          "homepageUrl": "https://www.optimizely.com/",
+          "testIdExample": "OPTI-1",
+          "testNameExample": "My First Optimizely Test"
+        },
+        "files": {
+          "html": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "shared": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "control": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "variation": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "js": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "css": {
+            "showInPrompts": true,
+            "checkedByDefault": true
+          },
+          "readme": {
+            "showInPrompts": true,
+            "checkedByDefault": true,
+            "fileExtension": "md",
+            "singleFile": true
+          },
+          "scss": {
+            "showInPrompts": true,
+            "checkedByDefault": false
+          },
+          "tampermonkey": {
+            "showInPrompts": true,
+            "checkedByDefault": false,
+            "fileExtension": "js"
+          },
+          "cypress": {
+            "showInPrompts": true,
+            "checkedByDefault": false,
+            "singleFile": true,
+            "fileExtension": "js"
+          }
+        }
+      },
+      "output": {
+        "destination": "_tests",
+        "localhost": "http://localhost:3000"
+      },
+      "templates": {
+        "customDirectory": "../test_custom_templates"
+      },
+      "resources": {
+        "tampermonkey": true,
+        "cypress": true,
+        "scss": true
+      }
+    }
+  }
+}

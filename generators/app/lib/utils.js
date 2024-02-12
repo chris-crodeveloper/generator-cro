@@ -1,0 +1,166 @@
+/**
+ * @function getCustomTemplates
+ * Check for any custom templates
+ */
+
+export const getCustomTemplates = (context, fs) => {
+  try {
+    const opticonfig = context.config.get("opticonfig");
+    const customTemplateDirectory = `${context.contextRoot}\\${opticonfig.templates.customDirectory}`;
+
+    const customTemplateChildren = fs.readdirSync(customTemplateDirectory);
+
+    if (!customTemplateChildren) return null;
+
+    // Get child folder names
+    let customTemplateFolderNames = customTemplateChildren.filter((folder) =>
+      fs.statSync(`${customTemplateDirectory}/${folder}`).isDirectory()
+    );
+
+    // if custom folders exist add the default option
+    if (customTemplateFolderNames.length) {
+      customTemplateFolderNames.unshift("default");
+    }
+
+    return customTemplateFolderNames;
+  } catch (error) {
+    return false;
+  }
+};
+
+/**
+ * @function setupTemplateVariables
+ * @param {object} context - Yoeman context
+ * @param {object} opticonfig - Optimizely Generator Configuration
+ */
+export const setupTemplateVariables = (context) => {
+  try {
+    const opticonfig = context.config.get("opticonfig");
+
+    // Template Files
+    const files = opticonfig.prompts.files;
+
+    const dirPath = `${context.contextRoot}\\${
+      opticonfig.output.destination
+    }\\${
+      context.answers.childFolder ? `${context.answers.childFolder}\\` : ""
+    }${context.answers.testId}\\dist`;
+
+    const serverPath = `${opticonfig.output.localhost}/${
+      opticonfig.output.destination
+    }/${context.answers.childFolder ? `${context.answers.childFolder}/` : ""}${
+      context.answers.testId
+    }/dist`;
+
+    context.templateVariables = {};
+    context.templateVariables.destinationPath = `${context.contextRoot}\\${
+      opticonfig.output.destination
+    }\\${
+      context.answers.childFolder ? `${context.answers.childFolder}\\` : ""
+    }${context.answers.testId}\\src`;
+
+    const fileKeys = Object.keys(files);
+    fileKeys.forEach((key) => {
+      // Loop through files, adding paths to template object
+      let extension = files[key].fileExtension ? files[key].fileExtension : key;
+
+      // ignore generic file extensions
+      if (["shared", "control", "variation"].includes(extension)) return;
+
+      context.templateVariables[key] = {};
+      context.templateVariables[
+        key
+      ].shared = `${dirPath}\\${key}\\shared.${extension}`;
+      context.templateVariables[
+        key
+      ].control = `${dirPath}\\${key}\\control.${extension}`;
+      context.templateVariables[key].variation = `${dirPath}\\${key}\\`;
+      context.templateVariables[key].server = {};
+      context.templateVariables[
+        key
+      ].server.shared = `${serverPath}/${key}/shared.${key}`;
+      context.templateVariables[
+        key
+      ].server.control = `${serverPath}/${key}/control.${key}`;
+      context.templateVariables[key].server.variation = `${serverPath}/${key}/`;
+    });
+
+    // Variables
+    context.templateVariables.testDetails = context.answers.testDetails
+      ? context.answers.testDetails
+      : "";
+    context.templateVariables.optimizelyExperimentId = context.answers
+      .optimizelyExperimentId
+      ? context.answers.optimizelyExperimentId
+      : "";
+    context.templateVariables.optimizelyVariationId = context.answers
+      .optimizelyVariationId
+      ? context.answers.optimizelyVariationId
+      : "";
+    context.templateVariables.optimizelyVariationName = context.answers
+      .optimizelyVariationName
+      ? context.answers.optimizelyVariationName
+      : "";
+    context.templateVariables.testType = context.answers.testType
+      ? context.answers.testType
+      : "";
+    context.templateVariables.testId = context.answers.testId
+      ? context.answers.testId
+      : "";
+    context.templateVariables.testName = context.answers.testName
+      ? context.answers.testName
+      : "";
+    context.templateVariables.testDescription = context.answers.testDescription
+      ? context.answers.testDescription
+      : "";
+    context.templateVariables.variations = context.answers.variations
+      ? context.answers.variations
+      : "";
+    context.templateVariables.childFolder = context.answers.childFolder
+      ? context.answers.childFolder
+      : "";
+    context.templateVariables.filesToGenerate = context.answers.filesToGenerate
+      ? context.answers.filesToGenerate
+      : "";
+    context.templateVariables.developer = context.answers.developer
+      ? context.answers.developer
+      : "";
+    context.templateVariables.customTemplate = context.answers.customTemplate
+      ? context.answers.customTemplate
+      : "";
+  } catch (error) {
+    context.log(error);
+  }
+};
+
+/**
+ * @function createFile
+ * @param {object} context - context from yeoman
+ * @param {string} templatePath - Path to the template file to copy
+ * @param {string} destinationPath - Path to output destination
+ */
+
+export const createFile = (context, templatePath, destinationPath) => {
+  // Create file
+  context.fs.copyTpl(
+    context.templatePath(templatePath),
+    context.destinationPath(destinationPath),
+    context.templateVariables
+  );
+};
+
+/**
+ * @function getFormattedDate
+ */
+
+export const getFormattedDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  let month = today.getMonth() + 1;
+  let day = today.getDate();
+
+  if (day < 10) day = "0" + day;
+  if (month < 10) month = "0" + month;
+
+  return `${day}/${month}/${year}`;
+};

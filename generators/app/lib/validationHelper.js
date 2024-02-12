@@ -42,7 +42,7 @@ export const optimizelyIdValidation = (value) => {
  * Checks if value only contains numbers
  */
 export const isNumber = (value) => {
-  if (!isOnlyNumbers(value.length)) {
+  if (!isOnlyNumbers(value)) {
     return chalk.red("Value must be a number");
   }
   return true;
@@ -55,5 +55,5 @@ export const isNumber = (value) => {
  * Regex for numbers onlys
  */
 const isOnlyNumbers = (value) => {
-  return /^\d+$/.test(value);
+  return /^[0-9]+$/.test(value);
 };

@@ -2,185 +2,180 @@ import {
   isNotEmpty,
   optimizelyIdValidation,
   isNumber,
-} from "./validationHelper";
+} from "./validationHelper.js";
 import figlet from "figlet";
 import chalk from "chalk";
-import genoptiConfig from "~/genopti.config";
+import { testTypes } from "./optimizely.js";
 
 // List of prompts to gather information about the test
-export default [
-  {
-    type: "list",
-    name: "welcome",
-    message: async () => {
-      const figletText = await generateFigletText("Welcome!");
-      return `${figletText}\n\n To the Optimizely generator, confirm the genopti.config.js file is populated before continuing`;
+export const getPrompts = (context) => {
+  const opticonfig = context.config.get("opticonfig");
+  return [
+    {
+      type: "input",
+      name: "testDetails",
+      message: async () => {
+        const figletText = await generateFigletText("Welcome!");
+        return `${figletText}\n\n To the Optimizely generator. \n\nPlease enter the URL to the test details (eg JIRA, Trello etc)`;
+      },
+      validate: isNotEmpty,
     },
-    choices: ["Yes", "No"],
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
+    {
+      when: function (responses) {
+        return (
+          opticonfig.optimizely.project_defaults.auth_token &&
+          opticonfig.optimizely.project_defaults.default_project_id
+        );
+      },
+      type: "list",
+      name: "createOptimizelyTest",
+      message: async () => {
+        return `How would you like the files created? `;
+      },
+      choices: [
+        "New - create new experiment in Optimizely",
+        "Existing - request existing experiment from Optimizely",
+        "Files - create local files only",
+      ],
     },
-    type: "input",
-    name: "testDetails",
-    message: async () => {
-      return `Please enter the URL to the test details (eg JIRA, Trello etc)`;
+    {
+      when: function (responses) {
+        return (
+          !opticonfig.optimizely.project_defaults.auth_token ||
+          !opticonfig.optimizely.project_defaults.default_project_id
+        );
+      },
+      type: "list",
+      name: "createOptimizelyTest",
+      message: async () => {
+        return `How would you like the files created? `;
+      },
+      choices: ["Files - create local files only"],
     },
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
+    {
+      when: function (responses) {
+        return responses.createOptimizelyTest.includes("Existing");
+      },
+      type: "input",
+      name: "optimizelyExperimentId",
+      message: async () => {
+        return `Please enter the Optimizely experiment ID:`;
+      },
+      validate: optimizelyIdValidation,
     },
-    type: "list",
-    name: "createOptimizelyTest",
-    message: async () => {
-      return `Does this test already exist in Optimizely? \nIf no, it will be created \nIf yes, then the details will be requested from Optimizely.`;
+    {
+      when: function (responses) {
+        return responses.createOptimizelyTest.includes("New");
+      },
+      type: "list",
+      name: "testType",
+      message: async () => {
+        return `Please select the test type: `;
+      },
+      default: testTypes[0],
+      choices: testTypes,
     },
-    choices: ["Yes", "No"],
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" && responses.createOptimizelyTest === "No"
-      );
+    {
+      type: "input",
+      name: "testId",
+      message: async () => {
+        return `Please enter the test ID (this is used to namespace the test - eg ${opticonfig.prompts.config.testIdExample}):`;
+      },
+      validate: isNotEmpty,
     },
-    type: "input",
-    name: "optimizelyIdExperiment",
-    message: async () => {
-      return `Please enter the Optimizely experiment ID:`;
+    {
+      when: function (responses) {
+        return (
+          responses.createOptimizelyTest.includes("New") ||
+          responses.createOptimizelyTest.includes("Files")
+        );
+      },
+      type: "input",
+      name: "testName",
+      message: async () => {
+        return `Please enter the test name - eg ${opticonfig.prompts.config.testNameExample}):`;
+      },
+      validate: isNotEmpty,
     },
-    validate: optimizelyIdValidation,
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" && responses.createOptimizelyTest === "No"
-      );
+    {
+      type: "input",
+      name: "testDescription",
+      message: async () => {
+        return `Please enter the test description (optional):`;
+      },
     },
-    type: "list",
-    name: "testType",
-    message: async () => {
-      return `Please select the test type: `;
+    {
+      when: function (responses) {
+        return (
+          responses.createOptimizelyTest.includes("New") ||
+          responses.createOptimizelyTest.includes("Files")
+        );
+      },
+      type: "input",
+      name: "variations",
+      message: async () => {
+        return `Please enter the number of variations (not including control):`;
+      },
+      validate: isNumber,
     },
-    default: genoptiConfig.optimizely.testTypes[0],
-    choices: genoptiConfig.optimizely.testTypes,
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
+    {
+      type: "input",
+      name: "testUrl",
+      message: async () => {
+        return `Please enter the URL the test will run on:`;
+      },
+      default: opticonfig.prompts.config.homepageUrl,
+      validate: isNotEmpty,
     },
-    type: "input",
-    name: "testId",
-    message: async () => {
-      return `Please enter the test ID (this is used to namespace the test - eg ${genoptiConfig.prompts.config.testIdExample}):`;
+    {
+      when: function (responses) {
+        return opticonfig.prompts.config.childFolders.length;
+      },
+      type: "list",
+      name: "childFolder",
+      message: async () => {
+        return `Please select the test area:`;
+      },
+      default: opticonfig.prompts.config.childFolders[0],
+      choices: opticonfig.prompts.config.childFolders,
     },
-    validate: isNotEmpty,
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
+    {
+      type: "checkbox",
+      name: "filesToGenerate",
+      message: async () => {
+        return `Please select the files required to build locally:`;
+      },
+      choices: getFilesArray(opticonfig),
     },
-    type: "input",
-    name: "testName",
-    message: async () => {
-      return `Please enter the test name - eg ${genoptiConfig.prompts.config.testNameExample}):`;
+    {
+      when: function (responses) {
+        return opticonfig.prompts.config.developers.length;
+      },
+      type: "list",
+      name: "developer",
+      message: async () => {
+        return `And finally, which lovely developer is building this test?`;
+      },
+      choices: opticonfig.prompts.config.developers,
+      default: opticonfig.prompts.config.developers[0],
+      store: true,
     },
-    validate: isNotEmpty,
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" && responses.createOptimizelyTest === "Yes"
-      );
-    },
-    type: "input",
-    name: "testDescription",
-    message: async () => {
-      return `Please enter the test description (optional):`;
-    },
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" && responses.createOptimizelyTest === "Yes"
-      );
-    },
-    type: "input",
-    name: "variations",
-    message: async () => {
-      return `Please enter the number of variations (not including control):`;
-    },
-    default: 1,
-    validate: isNumber,
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
-    },
-    type: "input",
-    name: "testUrl",
-    message: async () => {
-      return `Please enter the URL the test will run on:`;
-    },
-    default: genoptiConfig.prompts.config.homepageUrl,
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" &&
-        genoptiConfig.prompts.config.childFolders.length
-      );
-    },
-    type: "list",
-    name: "testArea",
-    message: async () => {
-      return `Please select the test area:`;
-    },
-    default: genoptiConfig.prompts.config.childFolders[0],
-    choices: genoptiConfig.prompts.config.childFolders,
-  },
-  {
-    when: function (responses) {
-      return responses.welcome === "Yes";
-    },
-    type: "list",
-    name: "filesToGenerate",
-    message: async () => {
-      return `Please select the files required to build locally:`;
-    },
-    choices: getFilesArray,
-  },
-  {
-    when: function (responses) {
-      return (
-        responses.welcome === "Yes" &&
-        genoptiConfig.prompts.config.developers.length
-      );
-    },
-    type: "list",
-    name: "developer",
-    message: async () => {
-      return `And finally, which lovely developer is building this test?`;
-    },
-    choices: genoptiConfig.prompts.config.developers,
-    store: true,
-  },
-  {
-    type: "confirm",
-    name: "confirm",
-    message: async (response) => {
-      let answers = "";
+    {
+      type: "confirm",
+      name: "confirm",
+      message: async (response) => {
+        let answers = "";
 
-      for (let key in response) {
-        answers += `${convertString(key)}: ${chalk.green(response[key])}\n`;
-      }
-      const figletText = await generateFigletText("Please confirm:");
-      return `${figletText}\n\n${answers}\nConfirm?`;
+        for (let key in response) {
+          answers += `${convertString(key)}: ${chalk.green(response[key])}\n`;
+        }
+        const figletText = await generateFigletText("Please confirm:");
+        return `${figletText}\n\n${answers}\nConfirm?`;
+      },
+      default: true,
     },
-    default: true,
-  },
-];
+  ];
+};
 
 /**
  * @function generateFigletText
@@ -205,75 +200,19 @@ async function generateFigletText(text) {
  * @returns {Array}
  * Compiles list of files depending on config settings
  */
-function getFilesArray() {
-  const filesArray = [
-    {
-      name: "html",
-      value: "html",
-      checked: genoptiConfig.prompts.overrides.html,
-    },
-    {
-      name: "shared files",
-      value: "shared",
-      checked: genoptiConfig.prompts.overrides.shared,
-    },
-    {
-      name: "control files",
-      value: "control",
-      checked: genoptiConfig.prompts.overrides.control,
-    },
-    {
-      name: "variation files",
-      value: "variation",
-      checked: genoptiConfig.prompts.overrides.variation,
-    },
-    {
-      name: "js",
-      value: "js",
-      checked: genoptiConfig.prompts.overrides.js,
-    },
-    {
-      name: "tampermonkey",
-      value: "tampermonkey",
-      checked: genoptiConfig.prompts.overrides.tampermonkey,
-    },
-    {
-      name: "README",
-      value: "README",
-      checked: genoptiConfig.prompts.overrides.readme,
-    },
-  ];
-
-  // Add SCSS / CSS files
-  if (genoptiConfig.resources.scss) {
-    filesArray.push({
-      name: "scss",
-      value: "scss",
-      checked: genoptiConfig.prompts.overrides.scss,
-    });
-  } else {
-    filesArray.push({
-      name: "css",
-      value: "css",
-      checked: genoptiConfig.prompts.overrides.css,
-    });
-  }
-
-  // Add tampermonkey files
-  if (genoptiConfig.resources.tampermonkey) {
-    filesArray.push({
-      name: "tampermonkey",
-      value: "tampermonkey",
-      checked: genoptiConfig.prompts.overrides.tampermonkey,
-    });
-  }
-
-  // Add cypress files
-  if (genoptiConfig.resources.tampermonkey) {
-    filesArray.push({
-      name: "cypress",
-      value: "cypress",
-      checked: genoptiConfig.prompts.overrides.cypress,
+function getFilesArray(opticonfig) {
+  const filesArray = [];
+  if (opticonfig.prompts.files) {
+    const files = opticonfig.prompts.files;
+    const fileKeys = Object.keys(files);
+    fileKeys.forEach((key) => {
+      if (files[key].showInPrompts) {
+        filesArray.push({
+          name: ` - ${key}`,
+          value: key,
+          checked: files[key].checkedByDefault,
+        });
+      }
     });
   }
 

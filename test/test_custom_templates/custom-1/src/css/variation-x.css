@@ -1,0 +1,12 @@
+/*
+ ** CUSTOM TEMPLATE 1
+ ** Developer: <%= developer %>
+ ** Date: <%= date %>
+ ** Test: <%= testName %>
+ ** Variation: <%= currentVariationName %>
+ ** Description: <%= testDescription %> 
+ */
+
+ .<%= testId %> {
+    
+ }
