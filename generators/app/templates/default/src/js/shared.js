@@ -10,8 +10,8 @@
  * Optimizely IDs
  */
 
-const experimentId = "<%= optimizelyExperimentId %>",
-  testId = "<%= testId %>";
+const experimentId = "<%= optimizely.experimentId %>",
+  variationId = "<%= optimizely.variationId %>";
 
 const utils = window["optimizely"].get("utils");
 

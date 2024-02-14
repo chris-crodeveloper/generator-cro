@@ -31,7 +31,6 @@ export const getCustomTemplates = (context, fs) => {
 /**
  * @function setupTemplateVariables
  * @param {object} context - Yoeman context
- * @param {object} opticonfig - Optimizely Generator Configuration
  */
 export const setupTemplateVariables = (context) => {
   try {
@@ -89,26 +88,15 @@ export const setupTemplateVariables = (context) => {
     context.templateVariables.testDetails = context.answers.testDetails
       ? context.answers.testDetails
       : "";
-    context.templateVariables.optimizelyExperimentId = context.answers
-      .optimizelyExperimentId
-      ? context.answers.optimizelyExperimentId
-      : "";
-    context.templateVariables.optimizelyVariationId = context.answers
-      .optimizelyVariationId
-      ? context.answers.optimizelyVariationId
-      : "";
-    context.templateVariables.optimizelyVariationName = context.answers
-      .optimizelyVariationName
-      ? context.answers.optimizelyVariationName
-      : "";
-    context.templateVariables.testType = context.answers.testType
-      ? context.answers.testType
-      : "";
+
     context.templateVariables.testId = context.answers.testId
       ? context.answers.testId
       : "";
     context.templateVariables.testName = context.answers.testName
       ? context.answers.testName
+      : "";
+    context.templateVariables.testUrl = context.answers.testUrl
+      ? context.answers.testUrl
       : "";
     context.templateVariables.testDescription = context.answers.testDescription
       ? context.answers.testDescription
@@ -128,9 +116,67 @@ export const setupTemplateVariables = (context) => {
     context.templateVariables.customTemplate = context.answers.customTemplate
       ? context.answers.customTemplate
       : "";
+
+    // Optimizely variables
+    context.templateVariables.optimizely = {};
+
+    // if Optimizely is configured, setup the Optimizely variables
+    if (
+      context.answers.createOptimizelyTest.includes("Existing") ||
+      context.answers.createOptimizelyTest.includes("New")
+    ) {
+      let defaultProject = opticonfig.optimizely.projects.find(
+        (project) => project.default
+      );
+      context.templateVariables.optimizely.project_name = context.answers
+        .useDefaultProject
+        ? defaultProject.project_name
+        : context.answers.optimizelyProjectName;
+
+      context.templateVariables.optimizely.experimentId = context.answers
+        .optimizelyExperimentId
+        ? context.answers.optimizelyExperimentId
+        : "";
+      context.templateVariables.optimizely.variationId = context.answers
+        .optimizelyVariationId
+        ? context.answers.optimizelyVariationId
+        : "";
+      context.templateVariables.optimizely.variationName = context.answers
+        .optimizelyVariationName
+        ? context.answers.optimizelyVariationName
+        : "";
+
+      context.templateVariables.optimizely.testType = context.answers.testType
+        ? context.answers.testType
+        : "";
+
+      context.templateVariables.optimizely.requestType =
+        context.answers.createOptimizelyTest.includes("Existing")
+          ? "GET"
+          : "POST";
+    }
   } catch (error) {
     context.log(error);
   }
+};
+
+/**
+ * @function setupOptimizelyTemplateVariables
+ * @param {object} context - Yoeman context
+ * @param {object} response - Optimizely Request Response
+ */
+export const setupOptimizelyTemplateVariables = (context, response) => {
+  context.templateVariables.testName = response.name;
+  context.templateVariables.variations = response.variations.length;
+  context.templateVariables.variationData = [];
+
+  // Loop through variations building variationData array
+  response.variations.forEach((variation) => {
+    context.templateVariables.variationData.push({
+      variationName: variation.name,
+      variationId: variation.variation_id,
+    });
+  });
 };
 
 /**

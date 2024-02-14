@@ -10,6 +10,12 @@ import { testTypes } from "./optimizely.js";
 // List of prompts to gather information about the test
 export const getPrompts = (context) => {
   const opticonfig = context.config.get("opticonfig");
+  const optimizelyDefault = opticonfig.optimizely.projects.filter(
+    (project) => project.default
+  );
+  const optimizelyProjects = opticonfig.optimizely.projects.map(
+    (project) => project.project_name
+  );
   return [
     {
       type: "input",
@@ -23,8 +29,7 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          opticonfig.optimizely.project_defaults.auth_token &&
-          opticonfig.optimizely.project_defaults.default_project_id
+          optimizelyDefault[0].auth_token && optimizelyDefault[0].project_id
         );
       },
       type: "list",
@@ -41,8 +46,39 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          !opticonfig.optimizely.project_defaults.auth_token ||
-          !opticonfig.optimizely.project_defaults.default_project_id
+          optimizelyDefault[0].auth_token &&
+          optimizelyDefault[0].project_id &&
+          opticonfig.optimizely.projects.length > 1 &&
+          (responses.createOptimizelyTest.includes("Existing") ||
+            responses.createOptimizelyTest.includes("New"))
+        );
+      },
+      type: "confirm",
+      name: "useDefaultProject",
+      message: async () => {
+        return `Continue with the Optimizely build in the ${chalk.green(
+          optimizelyDefault[0].project_name
+        )} project?`;
+      },
+    },
+    {
+      when: function (responses) {
+        return (
+          opticonfig.optimizely.projects.length > 1 &&
+          !responses.useDefaultProject
+        );
+      },
+      type: "list",
+      name: "optimizelyProjectName",
+      message: async () => {
+        return `Which Optimizely project would you like to use? `;
+      },
+      choices: optimizelyProjects,
+    },
+    {
+      when: function (responses) {
+        return (
+          !optimizelyDefault[0].auth_token || !optimizelyDefault[0].project_id
         );
       },
       type: "list",

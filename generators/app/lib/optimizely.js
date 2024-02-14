@@ -28,18 +28,31 @@ export const fetchOptimizelyExperiment = async (experimentId, authToken) => {
  *
  */
 export const createOptimizelyExperiment = async (authToken, payload) => {
-  const url = `https://api.optimizely.com/v2/experiments/`;
-  const options = {
-    method: "POST",
-    headers: new Headers({
-      Authorization: `Bearer ${authToken}`,
-      body: JSON.stringify(payload),
-    }),
-  };
+  try {
+    const url = `https://api.optimizely.com/v2/experiments`;
 
-  const response = await fetch(url, options);
-  const json = await response.json();
-  return json;
+    const bodyPayload = JSON.stringify(payload);
+    console.log("JSON.stringify(payload)", bodyPayload);
+    const options = {
+      method: "POST",
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        body: bodyPayload,
+      }),
+    };
+
+    const response = await fetch(url, options);
+
+    console.log("response", response);
+
+    const json = await response.json();
+
+    console.log("JSON", json);
+  } catch (error) {
+    console.log("Error:", error);
+  }
 };
 
 /**
@@ -55,6 +68,7 @@ export const optimizelyPayload = ({
   projectId,
   testType,
   testUrl,
+  audiences,
 }) => {
   // setup variations array
   const variations = [];
@@ -77,14 +91,39 @@ export const optimizelyPayload = ({
     });
   }
 
+  // Setup audiences
+  let audience_conditions = "everyone";
+  let audienceNames = Object.keys(audiences);
+  if (audienceNames.length) {
+    audience_conditions = `[\"and\",`;
+    audienceNames.forEach((name, index) => {
+      audience_conditions += `{\"audience_id\": ${audiences[name]}${
+        index < audienceNames.length - 1 ? `,` : ``
+      }}`;
+    });
+    audience_conditions += `]`;
+  }
+
+  console.log("audience_conditions", audience_conditions);
+
+  console.log({
+    noOfVariations,
+    description,
+    testName,
+    projectId,
+    testType,
+    testUrl,
+    audiences,
+  });
+
   // Return minimal payload
   return {
-    audience_conditions: "everyone",
+    audience_conditions: audience_conditions,
     changes: [],
     metrics: [],
     description: description,
     name: testName,
-    project_id: projectId,
+    project_id: parseInt(projectId),
     status: "not_started",
     traffic_allocation: 10000,
     type: testType,
