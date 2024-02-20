@@ -16,15 +16,27 @@ import {
   createOptimizelyExperiment,
   optimizelyPayload,
 } from "./lib/optimizely.js";
-import config from "../../../genopti.config.js";
 import { validateConfigFile } from "./lib/configValidation.js";
+import path from "path";
+import url from "url";
 
+const loadConfig = async () => {
+  const configPath = path.resolve(process.cwd(), "genopti.config.js"); // Resolve path to the user's root directory
+
+  try {
+    const configModule = await import(url.pathToFileURL(configPath));
+    return configModule.default || configModule; // If the module has a default export, use it; otherwise, use the entire module
+  } catch (err) {
+    console.error("Error loading config file:", err);
+    return {}; // Return empty object or handle error as needed
+  }
+};
 let opticonfig;
 let prompts;
 export default class extends Generator {
   async initializing() {
     // Setup local config
-    opticonfig = this.options.updatedMockConfig || config;
+    opticonfig = this.options.updatedMockConfig || (await loadConfig());
 
     // Check if opticonfig config file exists
     if (!opticonfig) {
@@ -183,7 +195,6 @@ export default class extends Generator {
               .templateVariables?.variationData?.length
               ? this.templateVariables?.variationData[0]?.variationName
               : ``;
-
             createFile(
               this,
               `${templatePath}\\src\\${file}\\control.${extension}`,

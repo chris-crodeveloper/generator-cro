@@ -5,9 +5,6 @@
  */
 
 // Add import for cro-web-development here - if it exists overwrite the below
-import dotenv from "dotenv";
-dotenv.config();
-
 export default {
   optimizely: {
     projects: [],
