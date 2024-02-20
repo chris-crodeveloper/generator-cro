@@ -42,21 +42,27 @@ After installation the configuration file `genopti.config.js` will have been add
 
 Optimizely auth token - this is the Optimizely Personal Access Token, follow [these instructions](https://docs.developers.optimizely.com/web-experimentation/docs/personal-access-token) to set one up.
 
-```
-optimizely.project_defaults.auth_token: [OPTIMIZELY_PERSONAL_ACCESS_TOKEN]
-```
+The Optimizely projects array allows you to setup multiple projects. You can select between the projects in the prompts. To set a default project, set the default flag to true.
 
-Optimizley Project ID - the ID of the Optimizely project you will be creating and requesting the experiments for.
+Each project object requires the Project Name, Auth Token, Audiences (name / id key value pair) and default flag.
 
-```
-optimizely.project_defaults.default_project_id:[OPTIMIZELY_PROJECT_ID]
-```
-
-Optimizely default audience (optional) - audience name, optimizely audience ID pairs. These audiences will be added to all new Optimizely experiments. AN example of usage would be a QA audience or a device list audience.
+Project Name - required the prompts to allow you to select projects.
+Auth token - required to use the Optimizely REST API
+Project ID - Optimizely project ID, required to use the Optimizely REST API
+Audiences - Audience name and ID pairs, these audiences will be automatically added to any Optimizely test created through the API. For example, QA Audiences.
+Default - set to true to use project as a default
 
 ```
-optimizely.project_defaults.default_audiences: []
-
+optimizely.projects: [{
+       project_name: [PROJECT_NAME],
+        auth_token:  [OPTIMIZELY_AUTH_TOKEN],
+        project_id: [PROJECT_ID],
+        audiences: {
+          [AUDIENCE_NAME]: [AUDIENCE_ID],
+          [AUDIENCE_NAME]: [AUDIENCE_ID],
+        },
+        default: [TRUE/FALSE],
+}]
 ```
 
 #### Defaults

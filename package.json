@@ -1,7 +1,7 @@
 {
-  "name": "generator-optimizely",
+  "name": "generator-cro",
   "version": "1.0.0",
-  "description": "A generator to scaffold Optimizely files locally",
+  "description": "A generator to scaffold CRO files locally",
   "main": "index.js",
   "type": "module",
   "keywords": [
