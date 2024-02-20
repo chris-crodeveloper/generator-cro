@@ -29,7 +29,9 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          optimizelyDefault[0].auth_token && optimizelyDefault[0].project_id
+          optimizelyDefault[0] &&
+          optimizelyDefault[0].auth_token &&
+          optimizelyDefault[0].project_id
         );
       },
       type: "list",
@@ -46,6 +48,23 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
+          !optimizelyDefault[0] ||
+          (optimizelyDefault[0] &&
+            (!optimizelyDefault[0].auth_token ||
+              !optimizelyDefault[0].project_id))
+        );
+      },
+      type: "list",
+      name: "createOptimizelyTest",
+      message: async () => {
+        return `How would you like the files created? `;
+      },
+      choices: ["Files - create local files only"],
+    },
+    {
+      when: function (responses) {
+        return (
+          optimizelyDefault[0] &&
           optimizelyDefault[0].auth_token &&
           optimizelyDefault[0].project_id &&
           opticonfig.optimizely.projects.length > 1 &&
@@ -64,8 +83,10 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          opticonfig.optimizely.projects.length > 1 &&
-          !responses.useDefaultProject
+          opticonfig?.optimizely?.projects?.length > 1 &&
+          !responses.useDefaultProject &&
+          (responses.createOptimizelyTest.includes("Existing") ||
+            responses.createOptimizelyTest.includes("New"))
         );
       },
       type: "list",
@@ -77,20 +98,7 @@ export const getPrompts = (context) => {
     },
     {
       when: function (responses) {
-        return (
-          !optimizelyDefault[0].auth_token || !optimizelyDefault[0].project_id
-        );
-      },
-      type: "list",
-      name: "createOptimizelyTest",
-      message: async () => {
-        return `How would you like the files created? `;
-      },
-      choices: ["Files - create local files only"],
-    },
-    {
-      when: function (responses) {
-        return responses.createOptimizelyTest.includes("Existing");
+        return responses.createOptimizelyTest?.includes("Existing");
       },
       type: "input",
       name: "optimizelyExperimentId",
@@ -101,7 +109,7 @@ export const getPrompts = (context) => {
     },
     {
       when: function (responses) {
-        return responses.createOptimizelyTest.includes("New");
+        return responses.createOptimizelyTest?.includes("New");
       },
       type: "list",
       name: "testType",
@@ -122,8 +130,8 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          responses.createOptimizelyTest.includes("New") ||
-          responses.createOptimizelyTest.includes("Files")
+          responses.createOptimizelyTest?.includes("New") ||
+          responses.createOptimizelyTest?.includes("Files")
         );
       },
       type: "input",
@@ -143,8 +151,8 @@ export const getPrompts = (context) => {
     {
       when: function (responses) {
         return (
-          responses.createOptimizelyTest.includes("New") ||
-          responses.createOptimizelyTest.includes("Files")
+          responses.createOptimizelyTest?.includes("New") ||
+          responses.createOptimizelyTest?.includes("Files")
         );
       },
       type: "input",

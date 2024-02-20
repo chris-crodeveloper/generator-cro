@@ -22,7 +22,7 @@ describe("Generator Tests ", () => {
 
       let updatedMockPrompts = mockPrompts;
       updatedMockPrompts.variations = "4";
-      updatedMockPrompts.filesToGenerate = ["js", "variation", "css", "html"];
+      updatedMockPrompts.filesToGenerate = ["html", "variation", "js", "css"];
 
       return helpers
         .run(path.join(__dirname, "../generators/app"))
@@ -157,6 +157,7 @@ describe("Generator Tests ", () => {
 
       let updatedMockPrompts = mockPrompts;
       updatedMockPrompts.childFolder = "";
+      updatedMockPrompts.variations = "4";
       updatedMockPrompts.customTemplate = "custom-1";
       updatedMockPrompts.filesToGenerate = [
         "variation",

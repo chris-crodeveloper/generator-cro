@@ -101,6 +101,7 @@ export const setupTemplateVariables = (context) => {
     context.templateVariables.testDescription = context.answers.testDescription
       ? context.answers.testDescription
       : "";
+
     context.templateVariables.variations = context.answers.variations
       ? context.answers.variations
       : "";
@@ -187,12 +188,16 @@ export const setupOptimizelyTemplateVariables = (context, response) => {
  */
 
 export const createFile = (context, templatePath, destinationPath) => {
-  // Create file
-  context.fs.copyTpl(
-    context.templatePath(templatePath),
-    context.destinationPath(destinationPath),
-    context.templateVariables
-  );
+  try {
+    // Create file
+    context.fs.copyTpl(
+      context.templatePath(templatePath),
+      context.destinationPath(destinationPath),
+      context.templateVariables
+    );
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 /**

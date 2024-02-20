@@ -5,8 +5,10 @@
 
 export default {
   testDetails: "My First Test",
-  createOptimizelyTest: "New - create local files only",
+  createOptimizelyTest: "Files - create local files only",
+  useDefaultProject: "No",
   optimizelyExperimentId: "12345678901",
+  testType: "a/b",
   testId: "Test-123",
   testName: "Test 123 - My First Test",
   testDescription: "My First Test - created using Optimizely Generator",

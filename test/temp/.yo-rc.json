@@ -1,15 +1,8 @@
 {
-  "generator-optimizely": {
+  "generator-cro": {
     "opticonfig": {
       "optimizely": {
-        "project_defaults": {
-          "auth_token": "",
-          "default_project_id": "",
-          "default_audiences": {
-            "audience-1-name": "audience-1-id",
-            "audience-2-name": "audience-2-id"
-          }
-        }
+        "projects": []
       },
       "prompts": {
         "config": {
@@ -79,11 +72,6 @@
       },
       "templates": {
         "customDirectory": "../test_custom_templates"
-      },
-      "resources": {
-        "tampermonkey": true,
-        "cypress": true,
-        "scss": true
       }
     }
   }

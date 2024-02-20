@@ -91,7 +91,7 @@ export default class extends Generator {
     const files = opticonfig.prompts.files;
 
     // Get Optimizely Data
-    if (this.templateVariables.optimizely) {
+    if (this.templateVariables.optimizely?.projects?.length) {
       let response;
       const optimizelyProject = opticonfig.optimizely.projects.find(
         (project) => {
@@ -142,8 +142,6 @@ export default class extends Generator {
 
       // Update template variables
       setupOptimizelyTemplateVariables(this, response);
-      //console.log(opticonfig.optimizely.defaults.auth_token);
-      //if()
     }
 
     // Template path - custom or default
@@ -165,7 +163,7 @@ export default class extends Generator {
         if (["shared", "control", "variation"].includes(file)) return;
 
         // Create single files (in src dir)
-        if (files[file].singleFile) {
+        if (files[file]?.singleFile) {
           // uppercase readme
           if (file === "readme") file = "README";
           createFile(
@@ -178,13 +176,14 @@ export default class extends Generator {
           if (filesToGenerate.includes("control")) {
             this.templateVariables.currentVariation.control = {};
             this.templateVariables.currentVariation.control.id = this
-              .templateVariables?.variationData[0]
-              ? this.templateVariables?.variationData[0].variationId
+              .templateVariables?.variationData?.length
+              ? this.templateVariables?.variationData[0]?.variationId
               : ``;
             this.templateVariables.currentVariation.control.name = this
-              .templateVariables?.variationData[0]
-              ? this.templateVariables?.variationData[0].variationName
+              .templateVariables?.variationData?.length
+              ? this.templateVariables?.variationData[0]?.variationName
               : ``;
+
             createFile(
               this,
               `${templatePath}\\src\\${file}\\control.${extension}`,
@@ -200,24 +199,24 @@ export default class extends Generator {
               `${templateVariables.destinationPath}\\${file}\\shared.${extension}`
             );
           }
-
           // Create variation
           if (filesToGenerate.includes("variation")) {
             for (
               let i = 1;
-              i < parseInt(this.templateVariables.variations);
+              i < parseInt(this.templateVariables.variations) + 1;
               i++
             ) {
               this.templateVariables.currentVariation.index = i;
               this.templateVariables.currentVariation.name = this
-                .templateVariables?.variationData[i]
-                ? this.templateVariables?.variationData[i].variationName
+                .templateVariables?.variationData?.length
+                ? this.templateVariables?.variationData[i]?.variationName
                 : `Variation #${i}`;
               this.templateVariables.currentVariation.filename = `variation-${i}`;
               this.templateVariables.currentVariation.id = this
-                .templateVariables?.variationData[i]
-                ? this.templateVariables?.variationData[i].variationId
+                .templateVariables?.variationData?.length
+                ? this.templateVariables?.variationData[i]?.variationId
                 : ``;
+
               createFile(
                 this,
                 `${templatePath}\\src\\${file}\\variation-x.${extension}`,

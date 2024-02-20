@@ -7,20 +7,7 @@
 
 export default {
   optimizely: {
-    // Set defaults when working with a single project
-    project_defaults: {
-      // Optimizely Auth Token for the current user
-      auth_token: "",
-
-      // default project ID, this will be used for Optimizely fetches
-      default_project_id: "",
-
-      // default audiences
-      default_audiences: {
-        "audience-1-name": "audience-1-id",
-        "audience-2-name": "audience-2-id",
-      },
-    },
+    projects: [],
   },
 
   // Input configuation
@@ -90,12 +77,5 @@ export default {
   // Custom Templates
   templates: {
     customDirectory: "_custom-templates",
-  },
-
-  // Extra resources added to the templates
-  resources: {
-    tampermonkey: true,
-    cypress: true,
-    scss: true,
   },
 };
