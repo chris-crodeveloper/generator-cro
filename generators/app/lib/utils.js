@@ -189,10 +189,12 @@ export const setupOptimizelyTemplateVariables = (context, response) => {
 
 export const createFile = (context, templatePath, destinationPath) => {
   try {
+    let templatePathForwardSlashes = templatePath.replace(/\\/g, "/");
+    let destinationPathForwardSlashes = destinationPath.replace(/\\/g, "/");
     // Create file
     context.fs.copyTpl(
-      context.templatePath(templatePath),
-      context.destinationPath(destinationPath),
+      context.templatePath(templatePathForwardSlashes),
+      context.destinationPath(destinationPathForwardSlashes),
       context.templateVariables
     );
   } catch (error) {

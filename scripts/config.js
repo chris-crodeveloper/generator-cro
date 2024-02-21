@@ -12,10 +12,15 @@ function findProjectRoot(currentPath) {
     return parentDir; // Found the project root
   }
 
+  folderCount++;
+
+  if (folderCount > 3) return null;
+
   // Recursively search in the parent directory
   return findProjectRoot(parentDir);
 }
 
+let folderCount = 0;
 const projectRoot = findProjectRoot(process.cwd());
 console.log(projectRoot);
 

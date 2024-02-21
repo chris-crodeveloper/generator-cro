@@ -5,7 +5,7 @@
  */
 
 // Add import for cro-web-development here - if it exists overwrite the below
-export default {
+module.exports = {
   optimizely: {
     projects: [],
   },
