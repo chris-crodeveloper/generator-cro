@@ -103,7 +103,7 @@ export default class extends Generator {
     const files = opticonfig.prompts.files;
 
     // Get Optimizely Data
-    if (this.templateVariables.optimizely?.projects?.length) {
+    if (opticonfig.optimizely?.projects?.length) {
       let response;
       const optimizelyProject = opticonfig.optimizely.projects.find(
         (project) => {

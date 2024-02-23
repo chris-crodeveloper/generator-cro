@@ -6,7 +6,7 @@
 export const getCustomTemplates = (context, fs) => {
   try {
     const opticonfig = context.config.get("opticonfig");
-    const customTemplateDirectory = `${context.contextRoot}\\${opticonfig.templates.customDirectory}`;
+    const customTemplateDirectory = `${context.contextRoot}\/${opticonfig.templates.customDirectory}`;
 
     const customTemplateChildren = fs.readdirSync(customTemplateDirectory);
 
@@ -39,24 +39,24 @@ export const setupTemplateVariables = (context) => {
     // Template Files
     const files = opticonfig.prompts.files;
 
-    const dirPath = `${context.contextRoot}\\${
+    const dirPath = `${context.contextRoot}\/${
       opticonfig.output.destination
-    }\\${
-      context.answers.childFolder ? `${context.answers.childFolder}\\` : ""
-    }${context.answers.testId}\\dist`;
+    }\/${
+      context.answers.childFolder ? `${context.answers.childFolder}\/` : ""
+    }${context.answers.testId}\/dist`;
 
-    const serverPath = `${opticonfig.output.localhost}/${
+    const serverPath = `${opticonfig.output.localhost}\/${
       opticonfig.output.destination
-    }/${context.answers.childFolder ? `${context.answers.childFolder}/` : ""}${
+    }\/${context.answers.childFolder ? `${context.answers.childFolder}\/` : ""}${
       context.answers.testId
-    }/dist`;
+    }\/dist`;
 
     context.templateVariables = {};
-    context.templateVariables.destinationPath = `${context.contextRoot}\\${
+    context.templateVariables.destinationPath = `${context.contextRoot}\/${
       opticonfig.output.destination
-    }\\${
-      context.answers.childFolder ? `${context.answers.childFolder}\\` : ""
-    }${context.answers.testId}\\src`;
+    }\/${
+      context.answers.childFolder ? `${context.answers.childFolder}\/` : ""
+    }${context.answers.testId}\/src`;
 
     const fileKeys = Object.keys(files);
     fileKeys.forEach((key) => {
@@ -69,19 +69,19 @@ export const setupTemplateVariables = (context) => {
       context.templateVariables[key] = {};
       context.templateVariables[
         key
-      ].shared = `${dirPath}\\${key}\\shared.${extension}`;
+      ].shared = `${dirPath}\/${key}\/shared.${extension}`;
       context.templateVariables[
         key
-      ].control = `${dirPath}\\${key}\\control.${extension}`;
-      context.templateVariables[key].variation = `${dirPath}\\${key}\\`;
+      ].control = `${dirPath}\/${key}\/control.${extension}`;
+      context.templateVariables[key].variation = `${dirPath}\/${key}\/`;
       context.templateVariables[key].server = {};
       context.templateVariables[
         key
-      ].server.shared = `${serverPath}/${key}/shared.${key}`;
+      ].server.shared = `${serverPath}\/${key}\/shared.${key}`;
       context.templateVariables[
         key
-      ].server.control = `${serverPath}/${key}/control.${key}`;
-      context.templateVariables[key].server.variation = `${serverPath}/${key}/`;
+      ].server.control = `${serverPath}\/${key}\/control.${key}`;
+      context.templateVariables[key].server.variation = `${serverPath}\/${key}\/`;
     });
 
     // Variables
