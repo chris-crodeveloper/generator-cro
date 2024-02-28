@@ -186,8 +186,12 @@ Test Details Variables
 <%= customTemplate %>
 
 Variation Variables
-<%= currentVariation.id  %>
+<%= currentVariation.control.id  %>
+<%= currentVariation.control.name %>
+<%= currentVariation.index  %>
+<%= currentVariation.id %>
 <%= currentVariation.name %>
+<%= currentVariation.filename %>
 
 Optimizely Variables
 <%= optimizely.experimentId %>
