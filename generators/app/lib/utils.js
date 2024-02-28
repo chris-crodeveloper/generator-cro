@@ -169,6 +169,9 @@ export const setupTemplateVariables = (context) => {
  * @param {object} response - Optimizely Request Response
  */
 export const setupOptimizelyTemplateVariables = (context, response) => {
+
+  context.templateVariables.optimizely = context.templateVariables.optimizely || {};
+  context.templateVariables.optimizely.experimentId = response.id;
   context.templateVariables.testName = response.name;
   context.templateVariables.variations = response.variations.length;
   context.templateVariables.variationData = [];
