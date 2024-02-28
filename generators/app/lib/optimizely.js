@@ -6,6 +6,7 @@
 /**
  * @function fetchOptimizelyExperiment
  * @param {string} experimentId Optimizely Experiment ID
+ * @param {string} authToken User Auth Token
  *
  */
 export const fetchOptimizelyExperiment = async (experimentId, authToken) => {
@@ -24,7 +25,8 @@ export const fetchOptimizelyExperiment = async (experimentId, authToken) => {
 
 /**
  * @function createOptimizelyExperiment
- * @param {string} experimentId Optimizely Experiment ID
+ * @param {string} authToken User Auth Token
+ * @param {object} payload Optimizely Request
  *
  */
 export const createOptimizelyExperiment = async (authToken, payload) => {
@@ -39,17 +41,14 @@ export const createOptimizelyExperiment = async (authToken, payload) => {
         Authorization: `Bearer ${authToken}`,
         Accept: "application/json",
         "Content-Type": "application/json",
-        body: bodyPayload,
       }),
+      body: bodyPayload,
     };
 
     const response = await fetch(url, options);
-
-    console.log("response", response);
-
     const json = await response.json();
+    return json;
 
-    console.log("JSON", json);
   } catch (error) {
     console.log("Error:", error);
   }
@@ -58,7 +57,6 @@ export const createOptimizelyExperiment = async (authToken, payload) => {
 /**
  * Optimizely - generate request payload to create experiment
  * @function optimizelyPayload
- * @param {string} values
  * @return {object} payload - new metrics data - https://library.optimizely.com/docs/api/app/v2/index.html#tag/Experiments/operation/create_experiment
  */
 export const optimizelyPayload = ({
@@ -104,7 +102,6 @@ export const optimizelyPayload = ({
     audience_conditions += `]`;
   }
 
-  console.log("audience_conditions", audience_conditions);
 
   console.log({
     noOfVariations,

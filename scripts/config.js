@@ -22,7 +22,9 @@ function findProjectRoot(currentPath) {
 
 let folderCount = 0;
 const projectRoot = findProjectRoot(process.cwd());
-console.log(projectRoot);
+
+// Check if config already exists - if it does then don't do another
+if (fs.existsSync(path.join(projectRoot, "genopti.config.js"))) return false;
 
 const __filename = fileURLToPath(import.meta.url);
 

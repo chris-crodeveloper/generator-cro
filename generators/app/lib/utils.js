@@ -1,6 +1,8 @@
 /**
  * @function getCustomTemplates
  * Check for any custom templates
+ * @param {object} context - Yoeman context
+ * @param {object} fs - fs package
  */
 
 export const getCustomTemplates = (context, fs) => {

@@ -29,7 +29,8 @@ Node v18
 Install the npm package
 
 ```
-npm i {{TODO}}
+npm i -g yo@5.0.0
+npm i 
 ```
 
 ### Configuration File
@@ -150,47 +151,81 @@ To add custom templates first add the custom template directory name.
 templates.customDirectory: []
 ```
 
-Custom template structure... {{TODO}}
+Custom template structure 
+
+```
+[folder-name] -> src -> [variation folders] -> [variation files]
+                       -> [single files]
+```
+
+For example:
+```
+checkoutTemplates -> src -> js  -> variation-x.js
+                                -> control.js
+                                -> shared.js
+                         -> css -> variation-x.js
+                                -> control.js
+                                -> shared.js
+                         -> README.md
+```
 
 #### Template Variables
+These variables can be added to any of the templates. 
+To output the values add the variables like this: <%= VARIABLE %>
+
+Test Details Variables
+<%= testDetails %>
+<%= testId %>
+<%= testName %>
+<%= testUrl %>
+<%= testDescription %>
+<%= variations %>
+<%= childFolder %>
+<%= filesToGenerate %>
+<%= developer %>
+<%= customTemplate %>
+
+Variation Variables
+<%= currentVariation.id  %>
+<%= currentVariation.name %>
+
+Optimizely Variables
+<%= optimizely.experimentId %>
+
+File Path Variables
+<%= {folderName}.variation %>
+<%= {folderName}.shared  %>
+<%= {folderName}.control  %>
+
+Server Path Variables
+<%= {folderName}.server.variation %>
+<%= {folderName}.server.shared  %>
+<%= {folderName}.server.control  %>
+
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+```
+npm run test
+```
+
 
 ### Break down into end to end tests
 
-Explain what these tests test and why
+Testing verifies the prompt selections generate the correct folder and files outputs
 
-```
-Give an example
-```
 
 ## Built With
 
 - [Yeoman](https://yeoman.io/) - The web scaffolding tool
 - [Optimizely API (2.0)](https://library.optimizely.com/docs/api/app/v2/index.html/) - Optimizely
+- Lots of love
 
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
 
 ## Authors
 
-- **Billie Thompson** - _Initial work_ - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+- **Chris Davies** 
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- etc
