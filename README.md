@@ -173,7 +173,10 @@ checkoutTemplates -> src -> js  -> variation-x.js
 These variables can be added to any of the templates. 
 To output the values add the variables like this: <%= VARIABLE %>
 
+
+```
 Test Details Variables
+
 <%= testDetails %>
 <%= testId %>
 <%= testName %>
@@ -186,12 +189,12 @@ Test Details Variables
 <%= customTemplate %>
 
 Variation Variables
-<%= currentVariation.control.id  %>
-<%= currentVariation.control.name %>
-<%= currentVariation.index  %>
-<%= currentVariation.id %>
-<%= currentVariation.name %>
-<%= currentVariation.filename %>
+<%= variations.control.id  %>
+<%= variations.control.name %>
+<%= variations.index  %>
+<%= variations.currentVariation.id %>
+<%= variations.currentVariation.name %>
+<%= variations.currentVariation.filename %>
 
 Optimizely Variables
 <%= optimizely.experimentId %>
@@ -205,6 +208,7 @@ Server Path Variables
 <%= {folderName}.server.variation %>
 <%= {folderName}.server.shared  %>
 <%= {folderName}.server.control  %>
+```
 
 
 ## Running the tests

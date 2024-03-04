@@ -740,12 +740,5 @@ describe("Generator Tests ", () => {
     });
   });
 
-  // Optimizely request made with correct payload
-  // describe("Optimizely values correctly used", () => {
-  //   it("Optimizely Project ID used from config", function () {});
-
-  //   // it("Optimizely Audience ID used from config", function () {});
-
-  //   // it("Optimizely auth token used from config", function () {});
-  // });
+ 
 });

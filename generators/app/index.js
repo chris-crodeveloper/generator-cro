@@ -94,151 +94,152 @@ export default class extends Generator {
   }
 
   async writing() {
-    // Set date
-    this.templateVariables.date = getFormattedDate();
+    try{
+      // Set date
+      this.templateVariables.date = getFormattedDate();
 
-    // Prompt answers
-    const templateVariables = this.templateVariables;
-    const filesToGenerate = templateVariables.filesToGenerate;
-    const files = opticonfig.prompts.files;
+      // Prompt answers
+      const templateVariables = this.templateVariables;
+      const filesToGenerate = templateVariables.filesToGenerate;
+      const files = opticonfig.prompts.files;
 
-    // Get Optimizely Data
-    if (opticonfig.optimizely?.projects?.length) {
-      let response;
-      const optimizelyProject = opticonfig.optimizely.projects.find(
-        (project) => {
-          return (
-            project.project_name ===
-            this.templateVariables.optimizely.project_name
-          );
-        }
-      );
-
-      // Create a new Optimizely test
-      if (this.templateVariables.optimizely.requestType === "POST") {
-        // Create the Optimizely request payload
-        const payload = optimizelyPayload({
-          noOfVariations: parseInt(this.templateVariables.variations),
-          description: this.templateVariables.testDescription,
-          testName: this.templateVariables.testName,
-          projectId: optimizelyProject.project_id,
-          testType: this.templateVariables.optimizely.testType,
-          testUrl: this.templateVariables.testUrl,
-          audiences: optimizelyProject.audiences,
-        });
-
-        console.log("payload", payload);
-
-        // create optimizely experiment
-        if (!this.options.updatedMockConfig) {
-          response = await createOptimizelyExperiment(
-            optimizelyProject.auth_token,
-            payload
-          );
-        }
-      }
-
-      // GET existing Optimizely Test
-      if (this.templateVariables.optimizely.requestType === "GET") {
-        if (!this.options.updatedMockConfig) {
-          response = await fetchOptimizelyExperiment(
-            this.templateVariables.optimizely.experimentId,
-            optimizelyProject.auth_token
-          );
-        }
-      }
-
-      //
-
-      console.log("response", response);
-
-      // Update template variables
-      setupOptimizelyTemplateVariables(this, response);
-    }
-
-    // Template path - custom or default
-    const templatePath =
-      this.answers.customTemplate && this.answers.customTemplate !== "default"
-        ? `${this.contextRoot}\\${opticonfig.templates.customDirectory}\\${this.answers.customTemplate}`
-        : "./default";
-
-    // Create Files
-    // Variation Files
-    filesToGenerate.forEach((file) => {
-      try {
-        this.templateVariables.currentVariation = {};
-        let extension = files[file].fileExtension
-          ? files[file].fileExtension
-          : file;
-
-        // ignore generic file extensions
-        if (["shared", "control", "variation"].includes(file)) return;
-
-        // Create single files (in src dir)
-        if (files[file]?.singleFile) {
-          // uppercase readme
-          if (file === "readme") file = "README";
-          createFile(
-            this,
-            `${templatePath}\\src\\${file}.${extension}`,
-            `${templateVariables.destinationPath}\\${file}.${extension}`
-          );
-        } else {
-          // Create control
-          if (filesToGenerate.includes("control")) {
-            this.templateVariables.currentVariation.control = {};
-            this.templateVariables.currentVariation.control.id = this
-              .templateVariables?.variationData?.length
-              ? this.templateVariables?.variationData[0]?.variationId
-              : ``;
-            this.templateVariables.currentVariation.control.name = this
-              .templateVariables?.variationData?.length
-              ? this.templateVariables?.variationData[0]?.variationName
-              : ``;
-            createFile(
-              this,
-              `${templatePath}\\src\\${file}\\control.${extension}`,
-              `${templateVariables.destinationPath}\\${file}\\control.${extension}`
+      // Get Optimizely Data
+      if (opticonfig.optimizely?.projects?.length && (this.answers.createOptimizelyTest.includes("Existing") || this.answers.createOptimizelyTest.includes("New"))) {
+        let response;
+        const optimizelyProject = opticonfig.optimizely.projects.find(
+          (project) => {
+            return (
+              project.project_name ===
+              this.templateVariables.optimizely.project_name
             );
           }
+        );
 
-          // Create shared
-          if (filesToGenerate.includes("shared")) {
-            createFile(
-              this,
-              `${templatePath}\\src\\${file}\\shared.${extension}`,
-              `${templateVariables.destinationPath}\\${file}\\shared.${extension}`
+        // Create a new Optimizely test
+        if (this.templateVariables.optimizely.requestType === "POST") {
+          // Create the Optimizely request payload
+          const payload = optimizelyPayload({
+            noOfVariations: parseInt(this.templateVariables.variationCount),
+            description: this.templateVariables.testDescription,
+            testName: this.templateVariables.testName,
+            projectId: optimizelyProject.project_id,
+            testType: this.templateVariables.optimizely.testType,
+            testUrl: this.templateVariables.testUrl,
+            audiences: optimizelyProject.audiences,
+          });
+
+
+          // create optimizely experiment
+          if (!this.options.updatedMockConfig) {
+            response = await createOptimizelyExperiment(
+              optimizelyProject.auth_token,
+              payload
             );
           }
-          // Create variation
-          if (filesToGenerate.includes("variation")) {
-            for (
-              let i = 1;
-              i < parseInt(this.templateVariables.variations) + 1;
-              i++
-            ) {
-              this.templateVariables.currentVariation.index = i;
-              this.templateVariables.currentVariation.name = this
+        }
+
+        // GET existing Optimizely Test
+        if (this.templateVariables.optimizely.requestType === "GET") {
+          if (!this.options.updatedMockConfig) {
+            response = await fetchOptimizelyExperiment(
+              this.templateVariables.optimizely.experimentId,
+              optimizelyProject.auth_token
+            );
+          }
+        }
+
+
+        // Update template variables
+        setupOptimizelyTemplateVariables(this, response);
+      }
+
+      // Template path - custom or default
+      const templatePath =
+        this.answers.customTemplate && this.answers.customTemplate !== "default"
+          ? `${this.contextRoot}\\${opticonfig.templates.customDirectory}\\${this.answers.customTemplate}`
+          : "./default";
+
+      // Create Files
+      // Variation Files
+      filesToGenerate.forEach((file) => {
+        try {
+          this.templateVariables.variations = {}
+          this.templateVariables.variations.currentVariation = {};
+          let extension = files[file].fileExtension
+            ? files[file].fileExtension
+            : file;
+
+          // ignore generic file extensions
+          if (["shared", "control", "variation"].includes(file)) return;
+
+          // Create single files (in src dir)
+          if (files[file]?.singleFile) {
+            // uppercase readme
+            if (file === "readme") file = "README";
+            createFile(
+              this,
+              `${templatePath}\\src\\${file}.${extension}`,
+              `${templateVariables.destinationPath}\\${file}.${extension}`
+            );
+          } else {
+            // Create control
+            if (filesToGenerate.includes("control")) {
+              this.templateVariables.variations.control = {};
+              this.templateVariables.variations.control.id = this
                 .templateVariables?.variationData?.length
-                ? this.templateVariables?.variationData[i]?.variationName
-                : `Variation #${i}`;
-              this.templateVariables.currentVariation.filename = `variation-${i}`;
-              this.templateVariables.currentVariation.id = this
-                .templateVariables?.variationData?.length
-                ? this.templateVariables?.variationData[i]?.variationId
+                ? this.templateVariables?.variationData[0]?.variationId
                 : ``;
-
+              this.templateVariables.variations.control.name = this
+                .templateVariables?.variationData?.length
+                ? this.templateVariables?.variationData[0]?.variationName
+                : ``;
               createFile(
                 this,
-                `${templatePath}\\src\\${file}\\variation-x.${extension}`,
-                `${templateVariables.destinationPath}\\${file}\\${this.templateVariables.currentVariation.filename}.${extension}`
+                `${templatePath}\\src\\${file}\\control.${extension}`,
+                `${templateVariables.destinationPath}\\${file}\\control.${extension}`
               );
             }
+
+            // Create shared
+            if (filesToGenerate.includes("shared")) {
+              createFile(
+                this,
+                `${templatePath}\\src\\${file}\\shared.${extension}`,
+                `${templateVariables.destinationPath}\\${file}\\shared.${extension}`
+              );
+            }
+            // Create variation
+            if (filesToGenerate.includes("variation")) {
+              for (
+                let i = 1;
+                i < parseInt(this.templateVariables.variationCount) + 1;
+                i++
+              ) {
+                this.templateVariables.variations.currentVariation.index = i;
+                this.templateVariables.variations.currentVariation.name = this
+                  .templateVariables?.variationData?.length
+                  ? this.templateVariables?.variationData[i]?.variationName
+                  : `Variation #${i}`;
+                this.templateVariables.variations.currentVariation.filename = `variation-${i}`;
+                this.templateVariables.variations.currentVariation.id = this
+                  .templateVariables?.variationData?.length
+                  ? this.templateVariables?.variationData[i]?.variationId
+                  : ``;
+
+                createFile(
+                  this,
+                  `${templatePath}\\src\\${file}\\variation-x.${extension}`,
+                  `${templateVariables.destinationPath}\\${file}\\${this.templateVariables.variations.currentVariation.filename}.${extension}`
+                );
+              }
+            }
           }
+        } catch (error) {
+          this.log(chalk.red("Error Generating Files:" + error));
         }
-      } catch (error) {
-        this.log(chalk.red("Error Generating Files:" + error));
-      }
-    });
+      });
+    } catch (error) {
+      this.log(chalk.red("Error:" + error));
+    }
   }
 }

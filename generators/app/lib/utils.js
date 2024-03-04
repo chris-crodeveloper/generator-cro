@@ -104,7 +104,7 @@ export const setupTemplateVariables = (context) => {
       ? context.answers.testDescription
       : "";
 
-    context.templateVariables.variations = context.answers.variations
+    context.templateVariables.variationCount = context.answers.variations
       ? context.answers.variations
       : "";
     context.templateVariables.childFolder = context.answers.childFolder
@@ -173,11 +173,11 @@ export const setupOptimizelyTemplateVariables = (context, response) => {
   context.templateVariables.optimizely = context.templateVariables.optimizely || {};
   context.templateVariables.optimizely.experimentId = response.id;
   context.templateVariables.testName = response.name;
-  context.templateVariables.variations = response.variations.length;
+  context.templateVariables.variationCount = response.variations.length - 1;
   context.templateVariables.variationData = [];
 
   // Loop through variations building variationData array
-  response.variations.forEach((variation) => {
+  response.variationCount.forEach((variation) => {
     context.templateVariables.variationData.push({
       variationName: variation.name,
       variationId: variation.variation_id,

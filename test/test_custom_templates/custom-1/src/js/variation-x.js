@@ -3,7 +3,7 @@
  ** Developer: <%= developer %>
  ** Date: <%= date %>
  ** Test: <%= testName %>
- ** Variation: <%=  currentVariation.name %>
+ ** Variation: <%=  variations.currentVariation.name %>
  ** Description: <%= testDescription %>
  */
 
@@ -12,8 +12,8 @@
  */
 
 const experimentId = "<%= optimizely.experimentId %>",
-  variationId = "<%= currentVariation.control.id %>",
-  variationName = "<%=  currentVariation.name %>",
+  variationId = "<%= variations.currentVariation.id %>",
+  variationName = "<%=  variations.currentVariation.name %>",
   testId = "<%= testId %>";
 
 const utils = window["optimizely"].get("utils");
