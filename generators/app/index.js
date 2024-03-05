@@ -7,6 +7,7 @@ import {
   setupOptimizelyTemplateVariables,
   createFile,
   getFormattedDate,
+  getTestFormattedName
 } from "./lib/utils.js";
 
 // Local imports
@@ -117,11 +118,14 @@ export default class extends Generator {
 
         // Create a new Optimizely test
         if (this.templateVariables.optimizely.requestType === "POST") {
+          // Get formatted test name
+          const testName = getTestFormattedName(this, this.templateVariables.testName);
+
           // Create the Optimizely request payload
           const payload = optimizelyPayload({
             noOfVariations: parseInt(this.templateVariables.variationCount),
             description: this.templateVariables.testDescription,
-            testName: this.templateVariables.testName,
+            testName: testName,
             projectId: optimizelyProject.project_id,
             testType: this.templateVariables.optimizely.testType,
             testUrl: this.templateVariables.testUrl,

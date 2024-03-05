@@ -7,6 +7,7 @@
 // Add import for cro-web-development here - if it exists overwrite the below
 module.exports = {
   optimizely: {
+    testNameFormat: '[<%= testId %>][<%= optimizely.testType %>][<%= testName %>]',
     projects: [],
   },
 

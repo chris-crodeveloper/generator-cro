@@ -198,6 +198,8 @@ Variation Variables
 
 Optimizely Variables
 <%= optimizely.experimentId %>
+<%= optimizely.testType %> 
+<%= optimizely.project_name %>
 
 File Path Variables
 <%= {folderName}.variation %>

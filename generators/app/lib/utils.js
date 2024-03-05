@@ -222,3 +222,56 @@ export const getFormattedDate = () => {
 
   return `${day}/${month}/${year}`;
 };
+
+/**
+ * @function getTestFormattedName
+ * @param {object} context - context from yeoman
+ * @param {string} testName - test name from prompts
+ * Format Optimizely testname
+ */
+
+export const getTestFormattedName = (context, testName) => {
+  try {
+    const opticonfig = context.config.get("opticonfig");
+    const testNameFormat = opticonfig.optimizely?.testNameFormat;
+    let formattedTestName = testName;
+
+    if(testNameFormat){
+      formattedTestName = replaceVariables(testNameFormat, context.templateVariables)  
+    }
+
+    return formattedTestName;
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+/**
+ * @function replaceVariables
+ * @param {string} template - test name format template
+ * @param {string} variables - templateVariables object
+ * Format Optimizely testname
+ */
+function replaceVariables(template, variables) {
+  const regex = /<%=\s*(.*?)\s*%>/g;
+  return template.replace(regex, (match, p1) => {
+    // Get the variable name
+    const variableName = p1.trim();
+    
+    // Split variable name by '.' to handle nested properties
+    const nestedProperties = variableName.split('.');
+    
+    // Traverse the nested properties to get the value
+    let value = variables;
+    for (const prop of nestedProperties) {
+      if (value.hasOwnProperty(prop)) {
+        value = value[prop];
+      } else {
+        // Return original string if any property is not found
+        return match;
+      }
+    }
+    
+    return value;
+  });
+}
