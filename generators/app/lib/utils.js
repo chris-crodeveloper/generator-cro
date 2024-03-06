@@ -208,6 +208,29 @@ export const createFile = (context, templatePath, destinationPath) => {
 };
 
 /**
+ * @function createVariablesFile
+ * @param {object} context - context from yeoman
+ * @param {string} templatePath - Path to the template file to copy
+ * @param {string} destinationPath - Path to output destination
+ */
+
+export const createVariablesFile = (context, templatePath, destinationPath) => {
+  try {
+    let templatePathForwardSlashes = templatePath.replace(/\\/g, "/");
+    let destinationPathForwardSlashes = destinationPath.replace(/\\/g, "/");
+    let templateVariables = context.templateVariables;
+    // Create file
+    context.fs.copyTpl(
+      context.templatePath(templatePathForwardSlashes),
+      context.destinationPath(destinationPathForwardSlashes),
+      {templateVariables}
+    );
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+/**
  * @function getFormattedDate
  */
 

@@ -6,6 +6,7 @@ import {
   setupTemplateVariables,
   setupOptimizelyTemplateVariables,
   createFile,
+  createVariablesFile,
   getFormattedDate,
   getTestFormattedName
 } from "./lib/utils.js";
@@ -178,13 +179,23 @@ export default class extends Generator {
 
           // Create single files (in src dir)
           if (files[file]?.singleFile) {
-            // uppercase readme
-            if (file === "readme") file = "README";
-            createFile(
-              this,
-              `${templatePath}\\src\\${file}.${extension}`,
-              `${templateVariables.destinationPath}\\${file}.${extension}`
-            );
+            // Create variables file
+            if(file === "variables"){
+              console.log('in variavles')
+              createVariablesFile(
+                this,
+                `${templatePath}\\src\\${file}.${extension}`,
+                `${templateVariables.destinationPath}\\${file}.${extension}`
+              );
+            } else {
+              // uppercase readme
+              if (file === "readme") file = "README";``
+              createFile(
+                this,
+                `${templatePath}\\src\\${file}.${extension}`,
+                `${templateVariables.destinationPath}\\${file}.${extension}`
+              );
+            }
           } else {
             // Create control
             if (filesToGenerate.includes("control")) {
