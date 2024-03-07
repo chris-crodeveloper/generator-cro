@@ -2,6 +2,7 @@
   "generator-cro": {
     "opticonfig": {
       "optimizely": {
+        "testNameFormat": "[<%= testId %>][<%= optimizely.testType %>][<%= testName %>]",
         "projects": [
           {
             "project_name": "Staging",

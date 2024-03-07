@@ -7,6 +7,7 @@
 
 export default {
   optimizely: {
+    testNameFormat: '[<%= testId %>][<%= optimizely.testType %>][<%= testName %>]',
     projects: [],
   },
 
@@ -77,5 +78,6 @@ export default {
   // Custom Templates
   templates: {
     customDirectory: "_custom-templates",
+    defaultCustomTemplate: ""
   },
 };
