@@ -6,6 +6,8 @@ import {
 import figlet from "figlet";
 import chalk from "chalk";
 import { testTypes } from "./optimizely.js";
+import { getCustomTemplates } from "./utils.js";
+import fs from "fs";
 
 // List of prompts to gather information about the test
 export const getPrompts = (context) => {
@@ -16,7 +18,24 @@ export const getPrompts = (context) => {
   const optimizelyProjects = opticonfig.optimizely.projects.map(
     (project) => project.project_name
   );
-  return [
+
+   // if custom templates exist then add the prompt to chose between templates
+  const customTemplates = getCustomTemplates(context, fs);
+
+
+  // Check for default custom template
+  const defaultCustomTemplate = opticonfig.templates.defaultCustomTemplate;
+  console.log('defaultCustomTemplate', defaultCustomTemplate)
+  console.log('customTemplates', customTemplates)
+  let defaultCustomTemplateExists = false;
+
+  if(customTemplates){
+    defaultCustomTemplateExists = customTemplates.includes(defaultCustomTemplate);
+    console.log('customTemplates.includes(defaultCustomTemplate)', customTemplates.includes(defaultCustomTemplate))
+  }
+   
+ 
+  let prompts =  [
     {
       type: "input",
       name: "testDetails",
@@ -25,6 +44,28 @@ export const getPrompts = (context) => {
         return `${figletText}\n\n To the Optimizely generator. \n\nPlease enter the URL to the test details (eg JIRA, Trello etc)`;
       },
       validate: isNotEmpty,
+    },
+    {
+      when: function (responses) {
+        return customTemplates && defaultCustomTemplateExists;
+      },
+      type: "confirm",
+      name: "useDefaultCustomTemplate",
+      message: async () => {
+        return `Continue with the ${chalk.green(
+          defaultCustomTemplate
+        )} custom template?`;
+      },
+    },
+    {
+      when: function (responses) {
+        return (customTemplates && !responses.useDefaultCustomTemplate) || (customTemplates && !defaultCustomTemplate)|| (customTemplates && !defaultCustomTemplateExists)  ;
+      },
+      type: "list",
+      name: "customTemplate",
+      message: "Please select the templates you'd like to build:",
+      default: customTemplates[0],
+      choices: customTemplates,
     },
     {
       when: function (responses) {
@@ -219,6 +260,8 @@ export const getPrompts = (context) => {
       default: true,
     },
   ];
+
+   return prompts;
 };
 
 /**

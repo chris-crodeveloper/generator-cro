@@ -840,5 +840,142 @@ describe("Generator Tests ", () => {
   
    
   });
- 
+  
+    // Custom files are added to prompt
+    describe("Defaults", () => {
+   
+      it("Default custom templates used", function () {
+        updatedMockConfig.templates.customDirectory = "../test_custom_templates";
+  
+        updatedMockConfig.templates.defaultCustomTemplate = "custom-1"
+        let updatedMockPrompts = mockPrompts;
+        updatedMockPrompts.childFolder = "";
+        updatedMockPrompts.useDefaultCustomTemplate = true;
+        updatedMockPrompts.filesToGenerate = [
+          "variation",
+          "js",
+          "control",
+          "css",
+          "html",
+          "readme",
+        ];
+        return helpers
+          .run(path.join(__dirname, "../generators/app"))
+          .withPrompts(updatedMockPrompts)
+          .inDir(tempDir)
+          .withOptions({ updatedMockConfig })
+          .then(function () {
+            // JS variation files
+            assert.file([
+              path.join(tempDir, "_tests/Test-123/src/js/variation-1.js"),
+              path.join(tempDir, "_tests/Test-123/src/js/variation-2.js"),
+              path.join(tempDir, "_tests/Test-123/src/js/variation-3.js"),
+              path.join(tempDir, "_tests/Test-123/src/js/variation-4.js"),
+            ]);
+  
+            // Confirm file contents
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/js/variation-1.js"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/js/variation-2.js"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/js/variation-3.js"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/js/variation-4.js"),
+              "CUSTOM TEMPLATE 1"
+            );
+  
+            // CSS variation files
+            assert.file([
+              path.join(tempDir, "_tests/Test-123/src/css/variation-1.css"),
+              path.join(tempDir, "_tests/Test-123/src/css/variation-2.css"),
+              path.join(tempDir, "_tests/Test-123/src/css/variation-3.css"),
+              path.join(tempDir, "_tests/Test-123/src/css/variation-4.css"),
+            ]);
+  
+            // Confirm file contents
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/css/variation-1.css"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/css/variation-2.css"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/css/variation-3.css"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/css/variation-4.css"),
+              "CUSTOM TEMPLATE 1"
+            );
+  
+            // HTML variation files
+            assert.file([
+              path.join(tempDir, "_tests/Test-123/src/html/variation-1.html"),
+              path.join(tempDir, "_tests/Test-123/src/html/variation-2.html"),
+              path.join(tempDir, "_tests/Test-123/src/html/variation-3.html"),
+              path.join(tempDir, "_tests/Test-123/src/html/variation-4.html"),
+            ]);
+  
+            // Confirm file contents
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/html/variation-1.html"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/html/variation-2.html"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/html/variation-3.html"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/html/variation-4.html"),
+              "CUSTOM TEMPLATE 1"
+            );
+  
+            // Control files created
+            assert.file([
+              path.join(tempDir, "_tests/Test-123/src/html/control.html"),
+              path.join(tempDir, "_tests/Test-123/src/css/control.css"),
+              path.join(tempDir, "_tests/Test-123/src/js/control.js"),
+            ]);
+  
+            // Confirm file contents
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/html/control.html"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/css/control.css"),
+              "CUSTOM TEMPLATE 1"
+            );
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/js/control.js"),
+              "CUSTOM TEMPLATE 1"
+            );
+  
+            // Readme  created
+            assert.file([path.join(tempDir, "_tests/Test-123/src/readme.md")]);
+  
+            assert.fileContent(
+              path.join(tempDir, "_tests/Test-123/src/readme.md"),
+              "CUSTOM TEMPLATE 1"
+            );
+          });
+      });
+  
+    
+     
+    });
+
 });

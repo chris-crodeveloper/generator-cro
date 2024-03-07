@@ -1,9 +1,9 @@
 /*
  ** CUSTOM TEMPLATE 1
  ** Developer: Chris
- ** Date: 05/03/2024
+ ** Date: 07/03/2024
  ** Test: Test 123 - My First Test
- ** Variation: Shared
+ ** Variation: Variation #1
  ** Description: My First Test - created using Optimizely Generator
  */
 
@@ -12,6 +12,8 @@
  */
 
 const experimentId = "",
+  variationId = "",
+  variationName = "Variation #1",
   testId = "Test-123";
 
 const utils = window["optimizely"].get("utils");
@@ -19,6 +21,9 @@ const utils = window["optimizely"].get("utils");
 // Add a CSS selector of the element
 utils.waitForElement("").then(function (element) {
   try {
+    // Add namespace to body
+    document.documentElement.classList.add(testId);
+
     // Add your code here...
   } catch (error) {
     console.log(error);

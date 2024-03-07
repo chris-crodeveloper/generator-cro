@@ -1,8 +1,6 @@
 import Generator from "yeoman-generator";
-import fs from "fs";
 import chalk from "chalk";
 import {
-  getCustomTemplates,
   setupTemplateVariables,
   setupOptimizelyTemplateVariables,
   createFile,
@@ -72,19 +70,7 @@ export default class extends Generator {
     // Get prompts
     prompts = getPrompts(this);
 
-    // Check for custom templates
-    const customTemplates = getCustomTemplates(this, fs);
-
-    // if custom templates exist then add the prompt to chose between templates
-    if (customTemplates) {
-      prompts.splice(1, 0, {
-        type: "list",
-        name: "customTemplate",
-        message: "Please select the templates you'd like to build:",
-        default: customTemplates[0],
-        choices: customTemplates,
-      });
-    }
+   
   }
 
   // Prompt answers
@@ -159,9 +145,10 @@ export default class extends Generator {
       }
 
       // Template path - custom or default
-      const templatePath =
-        this.answers.customTemplate && this.answers.customTemplate !== "default"
-          ? `${this.contextRoot}\\${opticonfig.templates.customDirectory}\\${this.answers.customTemplate}`
+      // Set custom template
+      const customTemplate = this.answers.useDefaultCustomTemplate ? opticonfig.templates.defaultCustomTemplate : this.answers.customTemplate;
+      const templatePath = customTemplate && customTemplate !== "default"
+          ? `${this.contextRoot}\\${opticonfig.templates.customDirectory}\\${customTemplate}`
           : "./default";
 
       // Create Files

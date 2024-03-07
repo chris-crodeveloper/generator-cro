@@ -89,7 +89,8 @@
         "localhost": "http://localhost:3000"
       },
       "templates": {
-        "customDirectory": "../test_custom_templates"
+        "customDirectory": "../test_custom_templates",
+        "defaultCustomTemplate": "custom-1"
       }
     }
   }

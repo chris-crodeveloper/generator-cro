@@ -78,5 +78,6 @@ module.exports = {
   // Custom Templates
   templates: {
     customDirectory: "_custom-templates",
+    defaultCustomTemplate: ""
   },
 };

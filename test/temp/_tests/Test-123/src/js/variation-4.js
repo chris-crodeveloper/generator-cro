@@ -1,9 +1,9 @@
 /*
  ** CUSTOM TEMPLATE 1
  ** Developer: Chris
- ** Date: 05/03/2024
+ ** Date: 07/03/2024
  ** Test: Test 123 - My First Test
- ** Variation: Variation #1
+ ** Variation: Variation #4
  ** Description: My First Test - created using Optimizely Generator
  */
 
@@ -13,7 +13,7 @@
 
 const experimentId = "",
   variationId = "",
-  variationName = "Variation #1",
+  variationName = "Variation #4",
   testId = "Test-123";
 
 const utils = window["optimizely"].get("utils");
