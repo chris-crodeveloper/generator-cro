@@ -25,13 +25,10 @@ export const getPrompts = (context) => {
 
   // Check for default custom template
   const defaultCustomTemplate = opticonfig.templates.defaultCustomTemplate;
-  console.log('defaultCustomTemplate', defaultCustomTemplate)
-  console.log('customTemplates', customTemplates)
   let defaultCustomTemplateExists = false;
 
   if(customTemplates){
     defaultCustomTemplateExists = customTemplates.includes(defaultCustomTemplate);
-    console.log('customTemplates.includes(defaultCustomTemplate)', customTemplates.includes(defaultCustomTemplate))
   }
    
  

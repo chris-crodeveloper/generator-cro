@@ -168,7 +168,6 @@ export default class extends Generator {
           if (files[file]?.singleFile) {
             // Create variables file
             if(file === "variables"){
-              console.log('in variavles')
               createVariablesFile(
                 this,
                 `${templatePath}\\src\\${file}.${extension}`,

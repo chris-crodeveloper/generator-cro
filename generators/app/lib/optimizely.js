@@ -34,7 +34,6 @@ export const createOptimizelyExperiment = async (authToken, payload) => {
     const url = `https://api.optimizely.com/v2/experiments`;
 
     const bodyPayload = JSON.stringify(payload);
-    console.log("JSON.stringify(payload)", bodyPayload);
     const options = {
       method: "POST",
       headers: new Headers({
@@ -103,15 +102,6 @@ export const optimizelyPayload = ({
   }
 
 
-  console.log({
-    noOfVariations,
-    description,
-    testName,
-    projectId,
-    testType,
-    testUrl,
-    audiences,
-  });
 
   // Return minimal payload
   return {
