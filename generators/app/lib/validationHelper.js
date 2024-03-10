@@ -12,11 +12,15 @@ import chalk from "chalk";
  * Checks if string is not empty
  */
 export const isNotEmpty = (value) => {
-  if (value.trim() === "") {
-    return chalk.red("Cannot be an empty value");
-  }
+  try {
+    if (value.trim() === "") {
+      return chalk.red("Cannot be an empty value");
+    }
 
-  return true;
+    return true;
+  } catch (error) {
+    console.log('validationHelper.js - isNotEmpty() - error: ' + error)
+  }
 };
 
 /**
@@ -26,13 +30,17 @@ export const isNotEmpty = (value) => {
  * Checks for a valid Optimizely ID
  */
 export const optimizelyIdValidation = (value) => {
-  if (value.trim().length !== 11) {
-    return chalk.red("The Optimizely ID has to be 11 numbers long");
+  try {
+    if (value.trim().length !== 11) {
+      return chalk.red("The Optimizely ID has to be 11 numbers long");
+    }
+    if (!isOnlyNumbers(value.trim().length)) {
+      return chalk.red("The Optimizely ID must be numbers only");
+    }
+    return true;
+  } catch (error) {
+    console.log('validationHelper.js - optimizelyIdValidation() - error: ' + error)
   }
-  if (!isOnlyNumbers(value.trim().length)) {
-    return chalk.red("The Optimizely ID must be numbers only");
-  }
-  return true;
 };
 
 /**
@@ -42,10 +50,15 @@ export const optimizelyIdValidation = (value) => {
  * Checks if value only contains numbers
  */
 export const isNumber = (value) => {
-  if (!isOnlyNumbers(value)) {
-    return chalk.red("Value must be a number");
+  try {
+    if (!isOnlyNumbers(value)) {
+      return chalk.red("Value must be a number");
+    }
+    return true;
+  } catch (error) {
+    console.log('validationHelper.js - isNumber() - error: ' + error)
   }
-  return true;
+  
 };
 
 /**
@@ -55,5 +68,10 @@ export const isNumber = (value) => {
  * Regex for numbers onlys
  */
 const isOnlyNumbers = (value) => {
-  return /^[0-9]+$/.test(value);
+  try {
+    return /^[0-9]+$/.test(value);
+  } catch (error) {
+    console.log('validationHelper.js - isOnlyNumbers() - error: ' + error)
+  }
+
 };

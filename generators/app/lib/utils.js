@@ -26,7 +26,7 @@ export const getCustomTemplates = (context, fs) => {
 
     return customTemplateFolderNames;
   } catch (error) {
-    return false;
+    console.log('utils.js - getCustomTemplates() - error: ' + error)
   }
 };
 
@@ -159,7 +159,7 @@ export const setupTemplateVariables = (context) => {
           : "POST";
     }
   } catch (error) {
-    context.log(error);
+    console.log('utils.js - setupTemplateVariables() - error: ' + error)
   }
 };
 
@@ -169,20 +169,23 @@ export const setupTemplateVariables = (context) => {
  * @param {object} response - Optimizely Request Response
  */
 export const setupOptimizelyTemplateVariables = (context, response) => {
+  try{
+    context.templateVariables.optimizely = context.templateVariables.optimizely || {};
+    context.templateVariables.optimizely.experimentId = response.id;
+    context.templateVariables.testName = response.name;
+    context.templateVariables.variationCount = response.variations.length - 1;
+    context.templateVariables.variationData = [];
 
-  context.templateVariables.optimizely = context.templateVariables.optimizely || {};
-  context.templateVariables.optimizely.experimentId = response.id;
-  context.templateVariables.testName = response.name;
-  context.templateVariables.variationCount = response.variations.length - 1;
-  context.templateVariables.variationData = [];
-
-  // Loop through variations building variationData array
-  response.variationCount.forEach((variation) => {
-    context.templateVariables.variationData.push({
-      variationName: variation.name,
-      variationId: variation.variation_id,
+    // Loop through variations building variationData array
+    response.variations.forEach((variation) => {
+      context.templateVariables.variationData.push({
+        variationName: variation.name,
+        variationId: variation.variation_id,
+      });
     });
-  });
+  } catch (error) {
+    console.log('utils.js - setupOptimizelyTemplateVariables() - error: ' + error)
+  }
 };
 
 /**
@@ -203,7 +206,7 @@ export const createFile = (context, templatePath, destinationPath) => {
       context.templateVariables
     );
   } catch (error) {
-    console.log("error", error);
+    console.log('utils.js - createFile() - error: ' + error)
   }
 };
 
@@ -226,7 +229,7 @@ export const createVariablesFile = (context, templatePath, destinationPath) => {
       {templateVariables}
     );
   } catch (error) {
-    console.log("error", error);
+    console.log('utils.js - createVariablesFile() - error: ' + error)
   }
 };
 
@@ -235,15 +238,19 @@ export const createVariablesFile = (context, templatePath, destinationPath) => {
  */
 
 export const getFormattedDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  let month = today.getMonth() + 1;
-  let day = today.getDate();
+  try {
+    const today = new Date();
+    const year = today.getFullYear();
+    let month = today.getMonth() + 1;
+    let day = today.getDate();
 
-  if (day < 10) day = "0" + day;
-  if (month < 10) month = "0" + month;
+    if (day < 10) day = "0" + day;
+    if (month < 10) month = "0" + month;
 
-  return `${day}/${month}/${year}`;
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    console.log('utils.js - getFormattedDate() - error: ' + error)
+  }
 };
 
 /**
@@ -265,7 +272,7 @@ export const getTestFormattedName = (context, testName) => {
 
     return formattedTestName;
   } catch (error) {
-    console.log("error", error);
+    console.log('utils.js - getTestFormattedName() - error: ' + error)
   }
 };
 
@@ -276,25 +283,29 @@ export const getTestFormattedName = (context, testName) => {
  * Format Optimizely testname
  */
 function replaceVariables(template, variables) {
-  const regex = /<%=\s*(.*?)\s*%>/g;
-  return template.replace(regex, (match, p1) => {
-    // Get the variable name
-    const variableName = p1.trim();
-    
-    // Split variable name by '.' to handle nested properties
-    const nestedProperties = variableName.split('.');
-    
-    // Traverse the nested properties to get the value
-    let value = variables;
-    for (const prop of nestedProperties) {
-      if (value.hasOwnProperty(prop)) {
-        value = value[prop];
-      } else {
-        // Return original string if any property is not found
-        return match;
+  try {
+    const regex = /<%=\s*(.*?)\s*%>/g;
+    return template.replace(regex, (match, p1) => {
+      // Get the variable name
+      const variableName = p1.trim();
+      
+      // Split variable name by '.' to handle nested properties
+      const nestedProperties = variableName.split('.');
+      
+      // Traverse the nested properties to get the value
+      let value = variables;
+      for (const prop of nestedProperties) {
+        if (value.hasOwnProperty(prop)) {
+          value = value[prop];
+        } else {
+          // Return original string if any property is not found
+          return match;
+        }
       }
-    }
-    
-    return value;
-  });
+      
+      return value;
+    });
+  } catch (error) {
+    console.log('utils.js - replaceVariables() - error: ' + error)
+  }
 }

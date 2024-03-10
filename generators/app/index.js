@@ -26,59 +26,69 @@ const loadConfig = async () => {
   try {
     const configModule = await import(url.pathToFileURL(configPath));
     return configModule.default || configModule; // If the module has a default export, use it; otherwise, use the entire module
-  } catch (err) {
-    console.error("Error loading config file:", err);
-    return {}; // Return empty object or handle error as needed
+
+  } catch (error) {
+    console.log('index.js - loadConfig() - error: ' + error)
   }
 };
+
 let opticonfig;
 let prompts;
+
 export default class extends Generator {
   async initializing() {
-    // Setup local config
-    opticonfig = this.options.updatedMockConfig || (await loadConfig());
+    try {
+      
+      // Setup local config
+      opticonfig = this.options.updatedMockConfig || (await loadConfig());
 
-    // Check if opticonfig config file exists
-    if (!opticonfig) {
-      this.log(chalk.red("ERROR: opti.config.js file not found"));
-      return;
+      // Check if opticonfig config file exists
+      if (!opticonfig) {
+        this.log(chalk.red("ERROR: opti.config.js file not found"));
+        return;
+      }
+
+      this.config.set("opticonfig", opticonfig);
+
+      // Save generator config in root
+      this.config.save();
+
+      // Validate config
+      const validation = validateConfigFile(opticonfig);
+
+      // Errors
+      if (validation.errors.length) {
+        validation.errors.forEach((message) => {
+          this.log(chalk.red(message));
+        });
+        return;
+      }
+
+      // Warnings
+      if (validation.warnings.length) {
+        validation.warnings.forEach((message) => {
+          this.log(chalk.yellow(message));
+        });
+      }
+
+      // Get prompts
+      prompts = getPrompts(this);
+
+    } catch (error) {
+      console.log('index.js - initializing() - error: ' + error)
     }
-
-    this.config.set("opticonfig", opticonfig);
-
-    // Save generator config in root
-    this.config.save();
-
-    // Validate config
-    const validation = validateConfigFile(opticonfig);
-
-    // Errors
-    if (validation.errors.length) {
-      validation.errors.forEach((message) => {
-        this.log(chalk.red(message));
-      });
-      return;
-    }
-
-    // Warnings
-    if (validation.warnings.length) {
-      validation.warnings.forEach((message) => {
-        this.log(chalk.yellow(message));
-      });
-    }
-
-    // Get prompts
-    prompts = getPrompts(this);
-
-   
   }
 
   // Prompt answers
   async prompting() {
-    this.answers = await this.prompt(prompts);
+    try {
+      this.answers = await this.prompt(prompts);
 
-    // Setup the template variables
-    setupTemplateVariables(this, opticonfig);
+      // Setup the template variables
+      setupTemplateVariables(this, opticonfig);
+    } catch (error) {
+      console.log('index.js - prompting() - error: ' + error)
+    }
   }
 
   async writing() {
@@ -241,6 +251,7 @@ export default class extends Generator {
       });
     } catch (error) {
       this.log(chalk.red("Error:" + error));
+      console.log('index.js - prompting() - error: ' + error)
     }
   }
 }

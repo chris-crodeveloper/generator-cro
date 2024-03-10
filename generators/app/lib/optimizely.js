@@ -10,17 +10,21 @@
  *
  */
 export const fetchOptimizelyExperiment = async (experimentId, authToken) => {
-  const url = `https://api.optimizely.com/v2/experiments/${experimentId}`;
-  const options = {
-    method: "GET",
-    headers: new Headers({
-      Authorization: `Bearer ${authToken}`,
-    }),
-  };
-
-  const response = await fetch(url, options);
-  const json = await response.json();
-  return json;
+  try {
+    const url = `https://api.optimizely.com/v2/experiments/${experimentId}`;
+    const options = {
+      method: "GET",
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    };
+  
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.log('optimizely.js - fetchOptimizelyExperiment() - error: ' + error)
+  }
 };
 
 /**
@@ -49,7 +53,7 @@ export const createOptimizelyExperiment = async (authToken, payload) => {
     return json;
 
   } catch (error) {
-    console.log("Error:", error);
+    console.log('optimizely.js - createOptimizelyExperiment() - error: ' + error)
   }
 };
 
@@ -67,7 +71,8 @@ export const optimizelyPayload = ({
   testUrl,
   audiences,
 }) => {
-  // setup variations array
+  try {
+    // setup variations array
   const variations = [];
   const numberOfVariations = parseInt(noOfVariations) + 1;
   const finalWeight =
@@ -101,8 +106,6 @@ export const optimizelyPayload = ({
     audience_conditions += `]`;
   }
 
-
-
   // Return minimal payload
   return {
     audience_conditions: audience_conditions,
@@ -121,6 +124,10 @@ export const optimizelyPayload = ({
     },
     variations: variations,
   };
+  } catch (error) {
+    console.log('optimizely.js - optimizelyPayload() - error: ' + error)
+  }
+  
 };
 
 /**
