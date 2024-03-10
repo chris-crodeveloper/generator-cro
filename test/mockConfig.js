@@ -77,7 +77,7 @@ export default {
 
   // Custom Templates
   templates: {
-    customDirectory: "_custom-templates",
+    customDirectory: "../test_custom_templates",
     defaultCustomTemplate: ""
   },
 };

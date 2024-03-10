@@ -23,7 +23,6 @@ export const getPrompts = (context) => {
     // if custom templates exist then add the prompt to chose between templates
     const customTemplates = getCustomTemplates(context, fs);
 
-
     // Check for default custom template
     const defaultCustomTemplate = opticonfig.templates.defaultCustomTemplate;
     let defaultCustomTemplateExists = false;
