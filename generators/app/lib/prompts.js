@@ -105,7 +105,6 @@ export const getPrompts = (context) => {
             optimizelyDefault[0] &&
             optimizelyDefault[0].auth_token &&
             optimizelyDefault[0].project_id &&
-            opticonfig.optimizely.projects.length > 1 &&
             (responses.createOptimizelyTest.includes("Existing") ||
               responses.createOptimizelyTest.includes("New"))
           );
@@ -121,7 +120,6 @@ export const getPrompts = (context) => {
       {
         when: function (responses) {
           return (
-            opticonfig?.optimizely?.projects?.length > 1 &&
             !responses.useDefaultProject &&
             (responses.createOptimizelyTest.includes("Existing") ||
               responses.createOptimizelyTest.includes("New"))

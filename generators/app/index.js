@@ -136,6 +136,14 @@ export default class extends Generator {
               optimizelyProject.auth_token,
               payload
             );
+
+            console.log('response: ', response)
+
+            if(response && response.campaign_id){
+              this.log(`${chalk.green("SUCCESS - Optimizely Test: " + response.name)}`)
+            } else {
+              this.log(`${chalk.red("ERROR - Optimizely Test failed to build")}`)
+            }
           }
         }
 

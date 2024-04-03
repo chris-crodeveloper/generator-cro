@@ -12,14 +12,6 @@
               "qa=true": 12345678901
             },
             "default": true
-          },
-          {
-            "project_name": "Prod",
-            "auth_token": "test",
-            "project_id": 12345678901,
-            "audiences": {
-              "qa=true": 12345678901
-            }
           }
         ]
       },

@@ -836,6 +836,93 @@ describe("Generator Tests ", () => {
           assert.strictEqual(templateVariables.developer, "Chris");
         });
     });
+    it("Files generated with single Optimizely project config", () => {
+      updatedMockConfig.optimizely.projects = [{
+        project_name: 'Staging',
+        auth_token: 'test',
+        project_id: 12345678901,
+        audiences: {
+          "qa=true" : 12345678901
+        },
+        default: true
+      }];
+      let updatedMockPrompts = mockPrompts;
+      updatedMockPrompts.childFolder = "testChildFolder";
+      updatedMockPrompts.customTemplate = "custom-1";
+      updatedMockPrompts.filesToGenerate = [
+        "variation",
+        "shared",
+        "js",
+        "css",
+        "readme",
+        "html"
+      ];
+      return helpers
+        .run(path.join(__dirname, "../generators/app"))
+        .withPrompts(updatedMockPrompts)
+        .inDir(tempDir)
+        .withOptions({ updatedMockConfig })
+        .then(function (generator) {
+          const templateVariables =
+            generator.options.generator.templateVariables;
+
+               // JS variation files
+          assert.file([
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/js/variation-1.js"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/js/variation-2.js"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/js/variation-3.js"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/js/variation-4.js"),
+          ]);
+
+          // CSS variation files
+          assert.file([
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/css/variation-1.css"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/css/variation-2.css"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/css/variation-3.css"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/css/variation-4.css"),
+          ]);
+
+          // HTML variation files
+          assert.file([
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/html/variation-1.html"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/html/variation-2.html"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/html/variation-3.html"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/html/variation-4.html"),
+          ]);
+
+
+          // Readme  created
+          assert.file([path.join(tempDir, "_tests/testChildFolder/Test-123/src/readme.md")]);
+
+          // No control files created
+          assert.noFile([
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/html/control.html"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/css/control.css"),
+            path.join(tempDir, "_tests/testChildFolder/Test-123/src/js/control.js"),
+          ]);
+
+          assert.strictEqual(templateVariables.testDetails, "My First Test");
+          assert.strictEqual(templateVariables.testId, "Test-123");
+          assert.strictEqual(
+            templateVariables.testName,
+            "Test 123 - My First Test"
+          );
+          assert.strictEqual(
+            templateVariables.testDescription,
+            "My First Test - created using Optimizely Generator"
+          );
+          assert.strictEqual(templateVariables.childFolder, "testChildFolder");
+          assert.deepEqual(templateVariables.filesToGenerate, [
+            "variation",
+            "shared",
+            "js",
+            "css",
+            "readme",
+            "html"
+          ]);
+          assert.strictEqual(templateVariables.developer, "Chris");
+        });
+    });
 
   
    
