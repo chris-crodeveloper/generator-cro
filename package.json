@@ -1,6 +1,6 @@
 {
   "name": "generator-cro",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "A generator to scaffold CRO files locally.",
   "main": "index.js",
   "type": "module",
@@ -20,6 +20,7 @@
     "figlet": "^1.7.0",
     "fs": "^0.0.1-security",
     "fs-extra": "^11.2.0",
+    "os": "^0.1.2",
     "path": "^0.12.7",
     "yeoman-assert": "^3.1.1",
     "yeoman-generator": "^7.1.1"

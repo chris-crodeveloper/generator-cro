@@ -1,3 +1,5 @@
+import os from "os";
+
 /**
  * @function getCustomTemplates
  * Check for any custom templates
@@ -37,11 +39,18 @@ export const getCustomTemplates = (context, fs) => {
 export const setupTemplateVariables = (context) => {
   try {
     const opticonfig = context.config.get("opticonfig");
+    let prefix = '';
+
+    if (os.platform() === 'win32') {
+      prefix = 'C:/';
+    } else {
+      prefix = 'file:///'
+    } 
 
     // Template Files
     const files = opticonfig.prompts.files;
 
-    const dirPath = `${context.contextRoot}\/${
+    const dirPath = `${prefix}${context.contextRoot}\/${
       opticonfig.output.destination
     }\/${
       context.answers.childFolder ? `${context.answers.childFolder}\/` : ""
