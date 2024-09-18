@@ -1,0 +1,11 @@
+/*
+ ** Developer: <%= developer %>
+ ** Date: <%= date %>
+ ** Test: <%= testName %>
+ ** Variation: <%= variations.currentVariation.name %>
+ ** Description: <%= testDescription %> 
+ */
+
+ .<%= testId %> {
+    
+ }

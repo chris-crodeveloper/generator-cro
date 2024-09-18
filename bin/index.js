@@ -3,6 +3,30 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Copy dirs
+function copyDirectory(src, dest) {
+  if (!fs.existsSync(dest)) {
+    fs.mkdirSync(dest, { recursive: true });
+  } else {
+    console.log(`Project ${projectPath} already exists`);
+  }
+
+  const items = fs.readdirSync(src);
+
+  items.forEach(item => {
+    const srcPath = path.join(src, item);
+    const destPath = path.join(dest, item);
+
+    const stats = fs.statSync(srcPath);
+
+    if (stats.isDirectory()) {
+      copyDirectory(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+}
+
 function findProjectRoot(currentPath) {
   // Move up on directory
   const parentDir = path.resolve(currentPath, "..");
@@ -20,6 +44,10 @@ function findProjectRoot(currentPath) {
   return findProjectRoot(parentDir);
 }
 
+const destinationDir = '_templates'
+const sourceDir = path.join(__dirname, './templates');
+copyDirectory(sourceDir, destinationDir);
+
 let folderCount = 0;
 const projectRoot = findProjectRoot(process.cwd());
 
@@ -36,3 +64,6 @@ if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
   fs.copyFileSync(templatePath, targetPath);
   console.log("Template config file has been copied to your project root.");
 }
+
+
+// Add templates

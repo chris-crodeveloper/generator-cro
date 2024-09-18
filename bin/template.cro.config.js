@@ -3,10 +3,9 @@
  * Contains the configuration for the CRO Generator
  */
 
-// Add import for cro-web-development here - if it exists overwrite the below
 module.exports = {
   optimizely: {
-    testNameFormat: '[<%= testId %>][<%= optimizely.testType %>][<%= testName %>]',
+    testNameFormat: '',
     projects: [],
   },
 
@@ -15,9 +14,9 @@ module.exports = {
     config: {
       childFolders: [],
       developers: [],
-      homepageUrl: "https://www.optimizely.com/",
-      testIdExample: "OPTI-1",
-      testNameExample: "My First Optimizely Test",
+      homepageUrl: "https://www.crodeveloper.com/",
+      testIdExample: "CRO-1",
+      testNameExample: "My First CRO Test",
     },
     files: {
       html: {
@@ -76,7 +75,7 @@ module.exports = {
 
   // Custom Templates
   templates: {
-    customDirectory: "_custom-templates",
+    customDirectory: "_templates",
     defaultCustomTemplate: ""
   },
 };

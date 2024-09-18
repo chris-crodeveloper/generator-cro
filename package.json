@@ -4,6 +4,9 @@
   "description": "A generator to scaffold CRO files locally.",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "generator-cro": "bin/index.js"
+  },
   "keywords": [
     "yeoman-generator"
   ],
