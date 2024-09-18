@@ -11,8 +11,6 @@
     "yeoman-generator"
   ],
   "scripts": {
-    "postinstall": "node ./scripts/config.js",
-    "posti": "node ./scripts/config.js",
     "test": "mocha"
   },
   "author": "Chris Davies",
