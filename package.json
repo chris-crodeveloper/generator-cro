@@ -1,6 +1,6 @@
 {
   "name": "generator-cro",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A generator to scaffold CRO files locally.",
   "main": "index.js",
   "type": "module",
@@ -11,7 +11,7 @@
     "yeoman-generator"
   ],
   "scripts": {
-    "postinstall": "node ./bin/bin.js",
+    "postinstall": "node ./bin/index.js",
     "posti": "node ./bin/index.js",
     "test": "mocha"
   },
