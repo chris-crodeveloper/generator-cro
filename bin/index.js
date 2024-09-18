@@ -1,7 +1,5 @@
-// postinstall.js
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+const fs = require('fs');
+const path = require('path');
 
 // Copy dirs
 function copyDirectory(src, dest) {
@@ -44,10 +42,8 @@ function findProjectRoot(currentPath) {
   return findProjectRoot(parentDir);
 }
 
-const __filename = fileURLToPath(import.meta.url);
 
-const __dirname = path.dirname(__filename);
-
+// Add templates
 const destinationDir = '_templates'
 const sourceDir = path.join(__dirname, './templates');
 copyDirectory(sourceDir, destinationDir);
@@ -68,4 +64,3 @@ if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
 }
 
 
-// Add templates
