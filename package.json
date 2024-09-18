@@ -1,9 +1,8 @@
 {
   "name": "generator-cro",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "A generator to scaffold CRO files locally.",
   "main": "index.js",
-  "type": "module",
   "bin": {
     "generator-cro": "bin/index.js"
   },
