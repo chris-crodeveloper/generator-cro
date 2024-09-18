@@ -44,6 +44,10 @@ function findProjectRoot(currentPath) {
   return findProjectRoot(parentDir);
 }
 
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
 const destinationDir = '_templates'
 const sourceDir = path.join(__dirname, './templates');
 copyDirectory(sourceDir, destinationDir);
@@ -54,9 +58,7 @@ const projectRoot = findProjectRoot(process.cwd());
 // Check if config already exists - if it does then don't do another
 if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
 
-  const __filename = fileURLToPath(import.meta.url);
-
-  const __dirname = path.dirname(__filename);
+  
 
   const templatePath = path.join(__dirname, "template.cro.config.js");
   const targetPath = path.join(projectRoot, "cro.config.js"); // Target file in the user's project root
