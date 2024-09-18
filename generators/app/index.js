@@ -21,7 +21,7 @@ import path from "path";
 import url from "url";
 
 const loadConfig = async () => {
-  const configPath = path.resolve(process.cwd(), "genopti.config.js"); // Resolve path to the user's root directory
+  const configPath = path.resolve(process.cwd(), "cro.config.js"); // Resolve path to the user's root directory
 
   try {
     const configModule = await import(url.pathToFileURL(configPath));

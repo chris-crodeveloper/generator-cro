@@ -1,20 +1,19 @@
 /*
- ** CUSTOM TEMPLATE 1
- ** Developer: Chris
- ** Date: 03/04/2024
- ** Test: Test 123 - My First Test
- ** Variation: Variation #4
- ** Description: My First Test - created using Optimizely Generator
+ ** Developer: <%= developer %>
+ ** Date: <%= date %>
+ ** Test: <%= testName %>
+ ** Variation: Control
+ ** Description: <%= testDescription %>
  */
 
-/**
+ /**
  * Optimizely IDs
  */
 
-const experimentId = "",
-  variationId = "",
-  variationName = "Variation #4",
-  testId = "Test-123";
+const experimentId = "<%= optimizely.experimentId %>",
+  variationId = "<%= variations.control.id %>",
+  variationName = "<%= variations.control.name %>",
+  testId = "<%= testId %>";
 
 const utils = window["optimizely"].get("utils");
 

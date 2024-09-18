@@ -24,14 +24,14 @@ let folderCount = 0;
 const projectRoot = findProjectRoot(process.cwd());
 
 // Check if config already exists - if it does then don't do another
-if (!fs.existsSync(path.join(projectRoot, "genopti.config.js"))){
+if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
 
   const __filename = fileURLToPath(import.meta.url);
 
   const __dirname = path.dirname(__filename);
 
-  const templatePath = path.join(__dirname, "template.genopti.config.js");
-  const targetPath = path.join(projectRoot, "genopti.config.js"); // Target file in the user's project root
+  const templatePath = path.join(__dirname, "template.cro.config.js");
+  const targetPath = path.join(projectRoot, "cro.config.js"); // Target file in the user's project root
 
   fs.copyFileSync(templatePath, targetPath);
   console.log("Template config file has been copied to your project root.");

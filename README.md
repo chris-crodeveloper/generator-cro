@@ -1,6 +1,7 @@
-# Optimizely Generator
+# CRO File Generator
 
-This configuarble Yeoman generator scaffolds Optimizely files in your local environment and can create an Optimizley experiment in the tool.
+This configuarble Yeoman generator scaffolds templated files in your local environment.
+By default it comes with Generic CRO Templates and Optimizely templates. 
 
 Main features:
 
@@ -35,7 +36,7 @@ npm i
 
 ### Configuration File
 
-After installation the configuration file `genopti.config.js` will have been added to the root of your project. This file is required to setup Optimizely configuartion, custom files and default values. This file is intended to be used for all dvelopers in the project and saved to source control.
+After installation the configuration file `cro.config.js` will have been added to the root of your project. This file is required to setup Optimizely configuartion, custom files and default values. This file is intended to be used for all dvelopers in the project and saved to source control.
 
 #### Optimizely setup
 

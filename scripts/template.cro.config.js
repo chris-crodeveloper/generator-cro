@@ -1,7 +1,6 @@
 /**
- * genopti.config.js
- * Contains the configuration for the Optimizely Generator
- * This generator can be used in conjunction with the npm package 'cro-web-development' (ADD URL HERE).
+ * cro.config.js
+ * Contains the configuration for the CRO Generator
  */
 
 // Add import for cro-web-development here - if it exists overwrite the below

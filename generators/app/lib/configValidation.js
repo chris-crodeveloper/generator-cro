@@ -29,17 +29,17 @@ export const validateConfigFile = (config) => {
     // Optimizely Project ID
     if (!optiDefault[0])
       validation.warnings.push(
-        "genopti.config.js: WARNING: No default Optimizely project set - add one to utilize the API"
+        "cro.config.js: WARNING: No default Optimizely project set - add one to utilize the API"
       );
 
     if (optiDefault[0] && !optiDefault[0].project_id)
       validation.warnings.push(
-        "genopti.config.js: WARNING: No Optimizely project ID set - add one to utilize the API"
+        "cro.config.js: WARNING: No Optimizely project ID set - add one to utilize the API"
       );
 
     if (optiDefault[0] && !optiDefault[0].auth_token)
       validation.warnings.push(
-        "genopti.config.js: WARNING: No Optimizely auth token set - add one to utilize the API"
+        "cro.config.js: WARNING: No Optimizely auth token set - add one to utilize the API"
       );
 
     return validation;

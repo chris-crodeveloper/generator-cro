@@ -38,7 +38,7 @@ export const getPrompts = (context) => {
         name: "testDetails",
         message: async () => {
           const figletText = await generateFigletText("Welcome!");
-          return `${figletText}\n\n To the Optimizely generator. \n\nPlease enter the URL to the test details (eg JIRA, Trello etc)`;
+          return `${figletText}\n\n To the CRO generator. \n\nPlease enter the URL to the test details (eg JIRA, Trello etc)`;
         },
         validate: isNotEmpty,
       },

@@ -1,5 +1,5 @@
 /**
- * MOCK genopti.config.js for Unit TEsting
+ * MOCK cro.config.js for Unit TEsting
  * Contains the configuration for the Optimizely Generator
  */
 

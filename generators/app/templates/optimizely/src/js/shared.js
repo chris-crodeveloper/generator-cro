@@ -2,9 +2,10 @@
  ** Developer: <%= developer %>
  ** Date: <%= date %>
  ** Test: <%= testName %>
- ** Variation: Control
+ ** Variation: Shared
  ** Description: <%= testDescription %>
  */
+
 
  const testId = "<%= testId %>";
 
