@@ -1,8 +1,18 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+let folderCount = 0;
+const projectRoot = findProjectRoot(process.cwd());
 
 // Copy dirs
 function copyDirectory(src, dest) {
+  console.log(src)
+  console.log(dest)
   if (!fs.existsSync(dest)) {
     fs.mkdirSync(dest, { recursive: true });
   } else {
@@ -44,17 +54,13 @@ function findProjectRoot(currentPath) {
 
 
 // Add templates
-const destinationDir = '_templates'
+const destinationDir = path.join(projectRoot,'_templates')
 const sourceDir = path.join(__dirname, './templates');
 copyDirectory(sourceDir, destinationDir);
 
-let folderCount = 0;
-const projectRoot = findProjectRoot(process.cwd());
 
 // Check if config already exists - if it does then don't do another
 if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
-
-  
 
   const templatePath = path.join(__dirname, "template.cro.config.js");
   const targetPath = path.join(projectRoot, "cro.config.js"); // Target file in the user's project root
