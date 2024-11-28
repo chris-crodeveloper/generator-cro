@@ -31,8 +31,8 @@ export const isNotEmpty = (value) => {
  */
 export const optimizelyIdValidation = (value) => {
   try {
-    if (value.trim().length !== 11) {
-      return chalk.red("The Optimizely ID has to be 11 numbers long");
+    if (value.trim().length < 10) {
+      return chalk.red("The Optimizely ID has to be Oover 10 numbers long");
     }
     if (!isOnlyNumbers(value.trim().length)) {
       return chalk.red("The Optimizely ID must be numbers only");
