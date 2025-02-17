@@ -1,242 +1,181 @@
 # CRO File Generator
 
-This configuarble Yeoman generator scaffolds templated files in your local environment.
-By default it comes with Generic CRO Templates and Optimizely templates. 
+A powerful and configurable Yeoman generator for scaffolding Conversion Rate Optimization (CRO) test files. Built with flexibility in mind, it comes pre-configured with Generic CRO Templates and Optimizely integration.
 
-Main features:
+## ✨ Key Features
 
-- Simple prompts to help build boilerplate templates
-- Capability to setup unlimited custom templates
-- Build JS, CSS and HTML files
-- Extendable to build custom files
-- Build new Optimizely experiments within the Optimizely tool, returning all relevant IDs
-- Fetch existing Optimizley experiments and build local files accordingly, returning all relevant IDs
-- Setup template variables to work with local files or a local server
+- 🚀 Interactive prompts for quick boilerplate generation
+- 🎯 Seamless Optimizely integration
+  - Create new experiments directly within Optimizely
+  - Fetch existing experiments and generate local files
+  - Automatic ID management and retrieval
+- 📁 Unlimited custom template support
+- 🛠️ Multi-file type support (JS, CSS, HTML)
+- 🔧 Configurable for both local files and server deployment
+- 🎨 Extensible architecture for custom file types
 
-## Getting Started
-
-These instructions will help you install and configure the generator.
+## 🚀 Getting Started
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+- Node.js v18 or higher
+- npm (comes with Node.js)
 
-```
-Node v18
-```
+### Installation
 
-### Installing
+```bash
+# Install Yeoman globally
+npm install -g yo@5.0.0
 
-Install the npm package
-
-```
-npm i -g yo@5.0.0
-npm i 
+# Install the generator and dependencies
+npm install
 ```
 
-### Configuration File
+## ⚙️ Configuration
 
-After installation the configuration file `cro.config.js` will have been added to the root of your project. This file is required to setup Optimizely configuartion, custom files and default values. This file is intended to be used for all dvelopers in the project and saved to source control.
+The generator uses a `cro.config.js` file in your project's root directory for configuration. This file should be version controlled to maintain consistency across your development team.
 
-#### Optimizely setup
+### Optimizely Setup
 
-**If either of the Optimizely Auth Token or Project ID are blank the Optimizely prompts will not be present.**
+To enable Optimizely features, you'll need to configure the following:
 
-Optimizely auth token - this is the Optimizely Personal Access Token, follow [these instructions](https://docs.developers.optimizely.com/web-experimentation/docs/personal-access-token) to set one up.
-
-The Optimizely projects array allows you to setup multiple projects. You can select between the projects in the prompts. To set a default project, set the default flag to true.
-
-Each project object requires the Project Name, Auth Token, Audiences (name / id key value pair) and default flag.
-
-Project Name - required the prompts to allow you to select projects.
-Auth token - required to use the Optimizely REST API
-Project ID - Optimizely project ID, required to use the Optimizely REST API
-Audiences - Audience name and ID pairs, these audiences will be automatically added to any Optimizely test created through the API. For example, QA Audiences.
-Default - set to true to use project as a default
-
-```
-optimizely.projects: [{
-       project_name: [PROJECT_NAME],
-        auth_token:  [OPTIMIZELY_AUTH_TOKEN],
-        project_id: [PROJECT_ID],
-        audiences: {
-          [AUDIENCE_NAME]: [AUDIENCE_ID],
-          [AUDIENCE_NAME]: [AUDIENCE_ID],
-        },
-        default: [TRUE/FALSE],
-}]
+```javascript
+optimizely: {
+  projects: [{
+    project_name: "Your Project Name",
+    auth_token: "YOUR_AUTH_TOKEN",
+    project_id: "YOUR_PROJECT_ID",
+    audiences: {
+      "QA Audience": "audience_id_1",
+      "Beta Users": "audience_id_2"
+    },
+    default: true
+  }]
+}
 ```
 
-#### Defaults
+> 💡 **Note**: Optimizely features require both Auth Token and Project ID. [Learn how to generate your Personal Access Token](https://docs.developers.optimizely.com/web-experimentation/docs/personal-access-token).
 
-The default values are used to help personalise the prompts, output file contents and output folder structure.
+### Default Configuration
 
-Child folders (optional). Array of string folder names will create a prompt. This allows for subfolders within the main output destination folder. Allowing for the ability to group tests together.
+Customize your workflow with these optional settings:
 
-```
-prompts.config.childFolders: []
-```
-
-Developers (optional) - Array of string names will create a prompt. This adds the developer name to the output files.
-
-```
-prompts.config.developers: []
-```
-
-Homepage URL (optional) - String url to show as an example in a prompt.
-
-```
-prompts.config.homepageUrl: []
+```javascript
+prompts: {
+  config: {
+    childFolders: ["feature", "bug-fix", "optimization"],
+    developers: ["John", "Jane", "Alex"],
+    homepageUrl: "https://example.com",
+    testIdExample: "TEST-123",
+    testNameExample: "Homepage Hero Test"
+  }
+}
 ```
 
-Test ID Example (optional) - String - to show as an example in a prompt.
+### File Configuration
 
-```
-prompts.config.testIdExample: []
-```
+Control which files are generated and how:
 
-Test Name Example (optional) - String - to show as an example in a prompt.
-
-```
-prompts.config.testNameExample: []
-```
-
-#### Files and Custom Files
-
-During the prompts you will be able to select and deselect which files you want to build for the current test, the files configuration options allows customisation of this prompt.To add more files simply add a new file to the files object (and make sure you add the new files to a custom template folder)
-
-Show In Prompts - Boolean - Make this file available for selection in the prompt.
-
-```
-prompts.files.[filename].showInPrompts:
+```javascript
+prompts: {
+  files: {
+    javascript: {
+      showInPrompts: true,
+      checkedByDefault: true,
+      fileExtension: "js",
+      singleFile: false
+    }
+    // Add more file types as needed
+  }
+}
 ```
 
-Checked by default - Boolean - File selected for scaffolding in the prompts or not
+### Output Configuration
 
-```
-prompts.files.[filename].checkedByDefault:
-```
+Specify where and how files should be generated:
 
-File Extension (optional) - If unset the files object name will be used as the file extension.
-
-```
-prompts.files.[filename].fileExtension:
-```
-
-Single File (optional) - If unset or false then control and variation files will be created for this file type. If set to true a single file will be created for this file type.
-
-```
-prompts.files.[filename].singleFile:
+```javascript
+output: {
+  destination: "tests",
+  localhost: "http://localhost:3000"
+}
 ```
 
-#### Output
+## 📝 Template Variables
 
-Output desination - the output destination for the tests. A folder will be created in the root if one doesn't already exist.
+Use these variables in your templates:
 
-```
-output.destination: [FOLDER_NAME]
-```
+### Test Details
+- `<%= testId %>` - Test identifier
+- `<%= testName %>` - Test name
+- `<%= testUrl %>` - Test URL
+- `<%= testDescription %>` - Test description
+- `<%= developer %>` - Developer name
 
-Localhost - if you are using a local server to serve your files then add the server and port here. This will be used to generate the file template variables.
+### Variation Details
+- `<%= variations.control.id %>` - Control variation ID
+- `<%= variations.control.name %>` - Control variation name
+- `<%= variations.currentVariation.id %>` - Current variation ID
+- `<%= variations.currentVariation.name %>` - Current variation name
 
-```
-output.localhost: [LOCALHOST_AND_PORT]
-```
+### File Paths
+- `<%= folderName.variation %>` - Variation file path
+- `<%= folderName.shared %>` - Shared file path
+- `<%= folderName.control %>` - Control file path
 
-#### Custom Templates
+## 🎨 Custom Templates
 
-This generator has default templates which can be found in the /templates folder.
-To add custom templates first add the custom template directory name.
-
-```
-templates.customDirectory: []
-```
-
-Custom template structure 
-
-```
-[folder-name] -> src -> [variation folders] -> [variation files]
-                       -> [single files]
-```
-
-For example:
-```
-checkoutTemplates -> src -> js  -> variation-x.js
-                                -> control.js
-                                -> shared.js
-                         -> css -> variation-x.js
-                                -> control.js
-                                -> shared.js
-                         -> README.md
-```
-
-#### Template Variables
-These variables can be added to any of the templates. 
-To output the values add the variables like this: <%= VARIABLE %>
-
+Create your own templates following this structure:
 
 ```
-Test Details Variables
-
-<%= testDetails %>
-<%= testId %>
-<%= testName %>
-<%= testUrl %>
-<%= testDescription %>
-<%= variations %>
-<%= childFolder %>
-<%= filesToGenerate %>
-<%= developer %>
-<%= customTemplate %>
-
-Variation Variables
-<%= variations.control.id  %>
-<%= variations.control.name %>
-<%= variations.index  %>
-<%= variations.currentVariation.id %>
-<%= variations.currentVariation.name %>
-<%= variations.currentVariation.filename %>
-
-Optimizely Variables
-<%= optimizely.experimentId %>
-<%= optimizely.testType %> 
-<%= optimizely.project_name %>
-
-File Path Variables
-<%= {folderName}.variation %>
-<%= {folderName}.shared  %>
-<%= {folderName}.control  %>
-
-Server Path Variables
-<%= {folderName}.server.variation %>
-<%= {folderName}.server.shared  %>
-<%= {folderName}.server.control  %>
+customTemplates/
+├── src/
+│   ├── js/
+│   │   ├── control.js
+│   │   ├── variation-x.js
+│   │   └── shared.js
+│   ├── css/
+│   │   ├── control.css
+│   │   ├── variation-x.css
+│   │   └── shared.css
+│   └── README.md
 ```
 
+Configure your custom template directory:
 
-## Running the tests
-
+```javascript
+templates: {
+  customDirectory: "customTemplates"
+}
 ```
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
 npm run test
 ```
 
+The tests verify that prompt selections correctly generate the expected folder structure and files.
 
-### Break down into end to end tests
+## 🛠️ Built With
 
-Testing verifies the prompt selections generate the correct folder and files outputs
+- [Yeoman](https://yeoman.io/) - Web scaffolding tool
+- [Optimizely API v2](https://library.optimizely.com/docs/api/app/v2/index.html) - A/B testing platform API
 
+## 👥 Contributing
 
-## Built With
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- [Yeoman](https://yeoman.io/) - The web scaffolding tool
-- [Optimizely API (2.0)](https://library.optimizely.com/docs/api/app/v2/index.html/) - Optimizely
-- Lots of love
+## 📝 License
 
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-## Authors
+## 👨‍💻 Author
 
-- **Chris Davies** 
+**Chris Davies**
 
-## License
+---
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+Made with ❤️ for the CRO community
