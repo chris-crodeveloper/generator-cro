@@ -1,72 +1,76 @@
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from "url";
+/**
+ * NPM Install Script
+ * Copies templates when package is installed via npm
+ */
 
-const __filename = fileURLToPath(import.meta.url);
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const __dirname = path.dirname(__filename);
+const Logger = {
+  info: (message) => console.log(`\x1b[36mINFO:\x1b[0m ${message}`),
+  success: (message) => console.log(`\x1b[32mSUCCESS:\x1b[0m ${message}`),
+  error: (message) => console.log(`\x1b[31mERROR:\x1b[0m ${message}`),
+  debug: (message) => console.log(`\x1b[35mDEBUG:\x1b[0m ${message}`)
+};
 
-let folderCount = 0;
-const projectRoot = findProjectRoot(process.cwd());
+async function install() {
+  try {
+    // Current script directory
+    const currentFile = fileURLToPath(import.meta.url);
+    const currentDir = dirname(currentFile);
+    
+    // Source is one level up from bin directory
+    const sourceDir = path.dirname(currentDir);
+    
+    // Templates directory should be in the package root
+    const templatesDir = path.join(sourceDir, 'templates');
 
-// Copy dirs
-function copyDirectory(src, dest) {
-  console.log(src)
-  console.log(dest)
-  if (!fs.existsSync(dest)) {
-    fs.mkdirSync(dest, { recursive: true });
-  } else {
-    console.log(`Project ${projectPath} already exists`);
-  }
-
-  const items = fs.readdirSync(src);
-
-  items.forEach(item => {
-    const srcPath = path.join(src, item);
-    const destPath = path.join(dest, item);
-
-    const stats = fs.statSync(srcPath);
-
-    if (stats.isDirectory()) {
-      copyDirectory(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
+    if (!fs.existsSync(templatesDir)) {
+      Logger.error(`Templates directory not found at: ${templatesDir}`);
+      return;
     }
-  });
-}
 
-function findProjectRoot(currentPath) {
-  // Move up on directory
-  const parentDir = path.resolve(currentPath, "..");
+    // Target directory should be where the user is installing the package
+    const targetDir = process.cwd();
 
-  // Check if package.json exists in the current directory
-  if (fs.existsSync(path.join(parentDir, "package.json"))) {
-    return parentDir; // Found the project root
+    Logger.info(`Current directory: ${currentDir}`);
+    Logger.info(`Source directory: ${sourceDir}`);
+    Logger.info(`Target directory: ${targetDir}`);
+
+    // Copy templates
+    const templatesDest = path.join(targetDir, '_templates');
+
+    if (targetDir !== sourceDir) {
+      if (!fs.existsSync(templatesDest)) {
+        fs.mkdirSync(templatesDest, { recursive: true });
+        fs.cpSync(templatesDir, templatesDest, { recursive: true });
+        Logger.success('Templates installed successfully');
+      } else {
+        Logger.info('Templates directory already exists, skipping');
+      }
+
+      // Copy config file
+      const configSource = path.join(sourceDir, 'template.cro.config.js');
+      const configDest = path.join(targetDir, 'cro.config.js');
+
+      if (!fs.existsSync(configDest) && fs.existsSync(configSource)) {
+        fs.copyFileSync(configSource, configDest);
+        Logger.success('Configuration file created');
+      }
+    } else {
+      Logger.info('Running in package directory, skipping installation');
+    }
+
+  } catch (error) {
+    Logger.error(`Installation error: ${error.message}`);
+    console.error(error);
   }
-
-  folderCount++;
-
-  if (folderCount > 3) return null;
-
-  // Recursively search in the parent directory
-  return findProjectRoot(parentDir);
 }
 
-
-// Add templates
-const destinationDir = path.join(projectRoot,'_templates')
-const sourceDir = path.join(__dirname, './templates');
-copyDirectory(sourceDir, destinationDir);
-
-
-// Check if config already exists - if it does then don't do another
-if (!fs.existsSync(path.join(projectRoot, "cro.config.js"))){
-
-  const templatePath = path.join(__dirname, "template.cro.config.js");
-  const targetPath = path.join(projectRoot, "cro.config.js"); // Target file in the user's project root
-
-  fs.copyFileSync(templatePath, targetPath);
-  console.log("Template config file has been copied to your project root.");
-}
-
-
+// Run installation
+install().catch(error => {
+  Logger.error(`Unexpected error: ${error.message}`);
+  console.error(error);
+});
