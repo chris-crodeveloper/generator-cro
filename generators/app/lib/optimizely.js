@@ -1,233 +1,66 @@
 /**
- * Optimizely API Integration Module
- * Handles interactions with Optimizely REST API
- * @module optimizely
+ * Optimizely
+ * Contains functions to call the Optimizely REST API - https://library.optimizely.com/docs/api/app/v2/index.html
  */
 
 /**
- * Custom error class for Optimizely API related errors
- */
-class OptimizelyAPIError extends Error {
-  constructor(message, status, code) {
-    super(message);
-    this.name = 'OptimizelyAPIError';
-    this.status = status;
-    this.code = code;
-  }
-}
-
-/**
- * Supported Optimizely test types
- * @readonly
- * @enum {string}
- */
-export const TEST_TYPES = Object.freeze({
-  AB: 'a/b',
-  FEATURE: 'feature',
-  MULTIVARIANT: 'multivariant',
-  PERSONALIZATION: 'personalization',
-  MULTIARMED_BANDIT: 'multiarmed_bandit'
-});
-
-/**
- * API configuration
- * @private
- */
-const API_CONFIG = {
-  BASE_URL: 'https://api.optimizely.com/v2',
-  HEADERS: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  }
-};
-
-/**
- * Validates the authentication token
- * @private
- * @param {string} authToken - Optimizely authentication token
- * @throws {OptimizelyAPIError} If auth token is invalid
- */
-const validateAuthToken = (authToken) => {
-  if (!authToken || typeof authToken !== 'string') {
-    throw new OptimizelyAPIError(
-      'Invalid authentication token',
-      401,
-      'INVALID_AUTH_TOKEN'
-    );
-  }
-};
-
-/**
- * Handles API response
- * @private
- * @param {Response} response - Fetch API response
- * @returns {Promise<Object>} Parsed response data
- * @throws {OptimizelyAPIError} If response indicates an error
- */
-const handleApiResponse = async (response) => {
-  const data = await response.json();
-
-  if (!response.ok) {
-    throw new OptimizelyAPIError(
-      data.message || 'API request failed',
-      response.status,
-      data.code || 'API_ERROR'
-    );
-  }
-
-  return data;
-};
-
-/**
- * Creates headers with authentication
- * @private
- * @param {string} authToken - Authentication token
- * @returns {Headers} Request headers
- */
-const createAuthHeaders = (authToken) => {
-  return new Headers({
-    ...API_CONFIG.HEADERS,
-    Authorization: `Bearer ${authToken}`
-  });
-};
-
-/**
- * Fetches an Optimizely experiment by ID
- * @async
- * @param {string} experimentId - Optimizely experiment ID
- * @param {string} authToken - Authentication token
- * @returns {Promise<Object>} Experiment data
- * @throws {OptimizelyAPIError} If the request fails
+ * @function fetchOptimizelyExperiment
+ * @param {string} experimentId Optimizely Experiment ID
+ * @param {string} authToken User Auth Token
+ *
  */
 export const fetchOptimizelyExperiment = async (experimentId, authToken) => {
   try {
-    validateAuthToken(authToken);
-
-    if (!experimentId) {
-      throw new OptimizelyAPIError(
-        'Experiment ID is required',
-        400,
-        'MISSING_EXPERIMENT_ID'
-      );
-    }
-
-    const response = await fetch(
-      `${API_CONFIG.BASE_URL}/experiments/${experimentId}`,
-      {
-        method: 'GET',
-        headers: createAuthHeaders(authToken)
-      }
-    );
-
-    return handleApiResponse(response);
+    const url = `https://api.optimizely.com/v2/experiments/${experimentId}`;
+    const options = {
+      method: "GET",
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    };
+  
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
   } catch (error) {
-    if (error instanceof OptimizelyAPIError) {
-      throw error;
-    }
-    throw new OptimizelyAPIError(
-      `Failed to fetch experiment: ${error.message}`,
-      500,
-      'FETCH_ERROR'
-    );
+    console.log('optimizely.js - fetchOptimizelyExperiment() - error: ' + error)
   }
 };
 
 /**
- * Creates a new Optimizely experiment
- * @async
- * @param {string} authToken - Authentication token
- * @param {Object} payload - Experiment configuration payload
- * @returns {Promise<Object>} Created experiment data
- * @throws {OptimizelyAPIError} If the request fails
+ * @function createOptimizelyExperiment
+ * @param {string} authToken User Auth Token
+ * @param {object} payload Optimizely Request
+ *
  */
 export const createOptimizelyExperiment = async (authToken, payload) => {
   try {
-    validateAuthToken(authToken);
+    const url = `https://api.optimizely.com/v2/experiments`;
 
-    if (!payload || typeof payload !== 'object') {
-      throw new OptimizelyAPIError(
-        'Invalid payload',
-        400,
-        'INVALID_PAYLOAD'
-      );
-    }
+    const bodyPayload = JSON.stringify(payload);
+    const options = {
+      method: "POST",
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      }),
+      body: bodyPayload,
+    };
 
-    const response = await fetch(
-      `${API_CONFIG.BASE_URL}/experiments`,
-      {
-        method: 'POST',
-        headers: createAuthHeaders(authToken),
-        body: JSON.stringify(payload)
-      }
-    );
+    const response = await fetch(url, options);
+    const json = await response.json();
+    return json;
 
-    return handleApiResponse(response);
   } catch (error) {
-    if (error instanceof OptimizelyAPIError) {
-      throw error;
-    }
-    throw new OptimizelyAPIError(
-      `Failed to create experiment: ${error.message}`,
-      500,
-      'CREATE_ERROR'
-    );
+    console.log('optimizely.js - createOptimizelyExperiment() - error: ' + error)
   }
 };
 
 /**
- * Generates variations array for experiment payload
- * @private
- * @param {number} count - Number of variations
- * @returns {Array<Object>} Array of variation configurations
- */
-const generateVariations = (count) => {
-  const variations = [];
-  const totalWeight = 10000;
-  const baseWeight = Math.floor(totalWeight / (count + 1));
-  const remainingWeight = totalWeight - (baseWeight * count);
-
-  for (let i = 0; i <= count; i++) {
-    variations.push({
-      actions: [],
-      name: i === 0 ? 'Original' : `Variation #${i}`,
-      status: 'active',
-      weight: i === count ? baseWeight + remainingWeight : baseWeight
-    });
-  }
-
-  return variations;
-};
-
-/**
- * Generates audience conditions string
- * @private
- * @param {Object} audiences - Audience configuration
- * @returns {string} Formatted audience conditions
- */
-const generateAudienceConditions = (audiences) => {
-  if (!audiences || Object.keys(audiences).length === 0) {
-    return 'everyone';
-  }
-
-  const conditions = Object.entries(audiences)
-    .map(([_, id]) => `{"audience_id": ${id}}`)
-    .join(',');
-
-  return `["and",${conditions}]`;
-};
-
-/**
- * Generates experiment creation payload
- * @param {Object} config - Experiment configuration
- * @param {number} config.noOfVariations - Number of variations
- * @param {string} config.description - Experiment description
- * @param {string} config.testName - Experiment name
- * @param {string|number} config.projectId - Project ID
- * @param {string} config.testType - Test type
- * @param {string} config.testUrl - Test URL
- * @param {Object} config.audiences - Audience configuration
- * @returns {Object} Formatted payload for experiment creation
- * @throws {OptimizelyAPIError} If configuration is invalid
+ * Optimizely - generate request payload to create experiment
+ * @function optimizelyPayload
+ * @return {object} payload - new metrics data - https://library.optimizely.com/docs/api/app/v2/index.html#tag/Experiments/operation/create_experiment
  */
 export const optimizelyPayload = ({
   noOfVariations,
@@ -236,54 +69,75 @@ export const optimizelyPayload = ({
   projectId,
   testType,
   testUrl,
-  audiences
+  audiences,
 }) => {
   try {
-    // Validate inputs
-    if (!testName || !projectId || !testUrl) {
-      throw new OptimizelyAPIError(
-        'Missing required fields',
-        400,
-        'INVALID_CONFIG'
-      );
-    }
+    // setup variations array
+  const variations = [];
+  const numberOfVariations = parseInt(noOfVariations) + 1;
+  const finalWeight =
+    10000 % numberOfVariations !== 0
+      ? 10000 - parseInt(10000 / numberOfVariations) * (numberOfVariations - 1)
+      : parseInt(10000 / numberOfVariations);
 
-    if (!Object.values(TEST_TYPES).includes(testType)) {
-      throw new OptimizelyAPIError(
-        'Invalid test type',
-        400,
-        'INVALID_TEST_TYPE'
-      );
-    }
-
-    const variations = generateVariations(parseInt(noOfVariations, 10));
-    const audience_conditions = generateAudienceConditions(audiences);
-
-    return {
-      audience_conditions,
-      changes: [],
-      metrics: [],
-      description: description || '',
-      name: testName,
-      project_id: parseInt(projectId, 10),
-      status: 'not_started',
-      traffic_allocation: 10000,
-      type: testType,
-      url_targeting: {
-        activation_type: 'immediate',
-        edit_url: testUrl,
-        conditions: `["and", ["or", {"match_type": "simple", "type": "url", "value": "${testUrl}"}]]`
-      },
-      variations
-    };
-  } catch (error) {
-    if (error instanceof OptimizelyAPIError) {
-      throw error;
-    }
-    throw new OptimizelyAPIError(
-      `Failed to generate payload: ${error.message}`,
-      500,
-      'PAYLOAD_ERROR'
-    );
+  // Add one to the variations for control/original
+  for (let i = 0; i < numberOfVariations; i++) {
+    variations.push({
+      actions: [],
+      name: i == 0 ? "Original" : `Variation #${i}`,
+      status: "active",
+      weight:
+        i === numberOfVariations - 1
+          ? finalWeight
+          : parseInt(10000 / numberOfVariations),
+    });
   }
+
+  // Setup audiences
+  let audience_conditions = "everyone";
+  let audienceNames = Object.keys(audiences);
+  if (audienceNames.length) {
+    audience_conditions = `[\"and\",`;
+    audienceNames.forEach((name, index) => {
+      audience_conditions += `{\"audience_id\": ${audiences[name]}${
+        index < audienceNames.length - 1 ? `,` : ``
+      }}`;
+    });
+    audience_conditions += `]`;
+  }
+
+  // Return minimal payload
+  return {
+    audience_conditions: audience_conditions,
+    changes: [],
+    metrics: [],
+    description: description,
+    name: testName,
+    project_id: parseInt(projectId),
+    status: "not_started",
+    traffic_allocation: 10000,
+    type: testType,
+    url_targeting: {
+      activation_type: "immediate",
+      edit_url: testUrl,
+      conditions: `[\"and\", [\"or\", {\"match_type\": \"simple\", \"type\": \"url\", \"value\": \"${testUrl}\"}]]`,
+    },
+    variations: variations,
+  };
+  } catch (error) {
+    console.log('optimizely.js - optimizelyPayload() - error: ' + error)
+  }
+  
 };
+
+/**
+ * Optimizely Test Types
+ */
+
+export const testTypes = [
+  "a/b",
+  "feature",
+  "multivariant",
+  "personalization",
+  "multiarmed_bandit",
+];

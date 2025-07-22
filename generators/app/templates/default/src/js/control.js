@@ -2,39 +2,23 @@
  ** Developer: <%= developer %>
  ** Date: <%= date %>
  ** Test: <%= testName %>
- ** Variation: Control
+ ** Variation: <%= variations.control.name %>
  ** Description: <%= testDescription %>
  */
 
- const testId = "<%= testId %>";
+/**
+ * Optimizely IDs
+ */
 
- const waitForElement = (element, callback) => {
-  const maxCalls = 50,
-    delay = 500;
-  let count = 0;
-  const interval = setInterval(() => {
-    try {
-      const el = document.querySelector(element);
+const experimentId = "<%= optimizely.experimentId %>",
+  variationId = "<%= variations.control.id %>",
+  variationName = "<%= variations.control.name %>",
+  testId = "<%= testId %>";
 
-      if (el) {
-        clearInterval(interval);
-
-        callback(el);
-      }
-
-      // After trying to find the element for 6 seconds, it stops
-      if (count > maxCalls) clearInterval(interval);
-
-      // increment interval count
-      count++;
-    } catch (error) {
-      console.error(error);
-    }
-  }, delay);
-};
+const utils = window["optimizely"].get("utils");
 
 // Add a CSS selector of the element
-waitForElement("", function (element) {
+utils.waitForElement("").then(function (element) {
   try {
     // Add namespace to body
     document.documentElement.classList.add(testId);
